@@ -101,4 +101,9 @@ public class MyPoint {
     public void incY(){
         y++;
     }
+    
+    @Override
+    public String toString(){
+        return (x + " - " + y);
+    }
 }

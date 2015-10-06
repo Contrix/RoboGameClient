@@ -18,11 +18,82 @@ public class Wave {
     ArrayList<MyPoint> list = new ArrayList<>();
     ArrayList<MyPoint> old = new ArrayList<>();
     ArrayList<MyPoint> add = new ArrayList<>();
+    private MyPoint point = new MyPoint(0, 0);
     
-    public int getCourse(int[][] array, MyPoint s, MyPoint e){
+    public int getCourse(int[][] array, MyPoint s, MyPoint e, int orientation){
         getMap(array, s, e);
+        setCourse(s, e);
+        setCourse(s, e);
         printMap(e);
         
+        switch(orientation){//1 - sever, 2 - jich,  3 - východ, 4 - západ
+            case 1:
+                if (s.getX() > point.getX()){
+                    return 0;
+                }
+                else if (s.getX() < point.getX()){
+                    return 3;
+                }
+                else{
+                    if (s.getY() < point.getY()){
+                        return 3;
+                    }
+                    else{
+                        return 4;
+                    }
+                }
+            
+            case 2:
+                if (s.getX() > point.getX()){
+                    return 3;
+                }
+                else if (s.getX() < point.getX()){
+                    return 0;
+                }
+                else{
+                    if (s.getY() < point.getY()){
+                        return 4;
+                    }
+                    else{
+                        return 3;
+                    }
+                }
+                
+            case 3:
+                if (s.getX() > point.getX()){
+                    return 4;
+                }
+                else if (s.getX() < point.getX()){
+                    return 3;
+                }
+                else{
+                    if (s.getY() < point.getY()){
+                        return 0;
+                    }
+                    else{
+                        return 3;
+                    }
+                }
+                
+            case 4:
+                if (s.getX() > point.getX()){
+                    return 4;
+                }
+                else if (s.getX() < point.getX()){
+                    return 3;
+                }
+                else{
+                    if (s.getY() < point.getY()){
+                        return 3;
+                    }
+                    else{
+                        return 0;
+                    }
+                }
+            
+            default:
+                break;
+        }
         return -1;
         
     }
@@ -68,6 +139,7 @@ public class Wave {
                     }
                 }
                 else{
+                    //map[e.getX()][e.getY()] = 20;
                     return 0;//vše OK
                 }
                 old.add(p);
@@ -77,7 +149,42 @@ public class Wave {
             old.clear();
             add.clear();
         }
+        System.out.println("cíl nenalezen");
         return 1;//cíl nenalezen
+    }
+    
+    private void setCourse(MyPoint s, MyPoint e){
+        point.setPoint(e);
+        for (int i = 0; i < map[e.getX()][e.getY()] - 1; i++){
+            if (point.getX() + 1 < map.length){
+                if(map[point.getX() + 1][point.getY()] != 0 && map[point.getX() + 1][point.getY()] < map[point.getX()][point.getY()]){
+                    point.incX();
+                    System.out.println("x+");
+                    continue;
+                }
+            }
+            if(point.getX() - 1 >= 0){
+                if(map[point.getX() - 1][point.getY()] != 0 && map[point.getX() - 1][point.getY()] < map[point.getX()][point.getY()]){
+                    point.decX();
+                    System.out.println("x-");
+                    continue;
+                }
+            }
+            if (point.getY() + 1 < map[0].length){
+                if(map[point.getX()][point.getY() + 1] !=0 && map[point.getX()][point.getY() + 1] < map[point.getX()][point.getY()]){
+                    point.incY();
+                    System.out.println("y+");
+                    continue;
+                }
+            }
+            if (point.getY() - 1 >= 0){
+                if(map[point.getX()][point.getY() - 1] != 0 && map[point.getX()][point.getY() - 1] < map[point.getX()][point.getY()]){
+                    point.decY();
+                    System.out.println("y-");
+                }
+            }
+        }
+        System.out.println(point);
     }
     
     private void printMap(MyPoint e){

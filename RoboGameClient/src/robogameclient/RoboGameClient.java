@@ -73,22 +73,24 @@ public class RoboGameClient extends Application {
         /*System.out.println(array.length);
         System.out.println(array[0].length);*/
         start = new MyPoint(0, 0);
-        end = new MyPoint(6, 1); 
+        end = new MyPoint(4, 4); //y, x
         
         setMove();
     }
     
     private void setMove(){
-        switch (wave.getCourse(array, start, end)){
+        switch (wave.getCourse(array, start, end, 1)){
             case -1:
                 break;
-            case 0:
+            case 0://jdi rovně
                 break;
             case 1:
                 break;
             case 2:
                 break;
-            case 3:
+            case 3://otoč doprava
+                break;
+            case 4://otoč doleva
                 break;
             default:
                 break;
