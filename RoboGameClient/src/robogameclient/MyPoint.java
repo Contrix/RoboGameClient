@@ -18,7 +18,7 @@ public class MyPoint {
      * @param x X coordinate
      * @param y Y coordinate
      */
-    public MyPoint(int x, int y){
+    public MyPoint(int y, int x){
         this.x = x;
         this.y = y;
     }

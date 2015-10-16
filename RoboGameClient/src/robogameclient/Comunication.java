@@ -22,9 +22,9 @@ public class Comunication {
     private final String server = "http://hroch.spseol.cz:44822/";
     private long id;
     private int map[][];
+    private JSONObject obj;
 
-    
-    public void getBotID() throws Exception{
+    public void initialise() throws Exception{
         String jsonData = "";
         String inputLine;
         URLConnection connectionToServer = new URL(server).openConnection();
@@ -33,12 +33,13 @@ public class Comunication {
                 jsonData += inputLine + "\n";
             }
         }
+        id = new JSONObject(jsonData).getLong("bot_id");
         
-        JSONObject obj = new JSONObject(jsonData);
-        id = obj.getLong("bot_id");
+        refreshData();
+        getMap();
     }
     
-    public int[][] getMap() throws Exception{
+    public void refreshData() throws Exception{
         String jsonData = "";
         String inputLine = "";
         URLConnection connectionGetMap = new URL(server + "game/" + String.valueOf(id)).openConnection();
@@ -48,8 +49,10 @@ public class Comunication {
                 jsonData += inputLine + "\n";
             }
         }
-        
-        JSONObject obj = new JSONObject(jsonData);
+        obj = new JSONObject(jsonData);
+    }
+
+    public int[][] getMap() throws Exception{
         map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
         
         JSONArray bot_map = obj.getJSONArray("map");
@@ -61,10 +64,33 @@ public class Comunication {
             }
             System.out.println();
         }
-        
-        
+        System.out.println();
         return(map);
     }
+    
+    public int[] getBotInfo() throws Exception{
+        JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);
+        int[] myBotInfo = {myBot.getInt("x"), myBot.getInt("y"), myBot.getInt("orientation")};
+        return (myBotInfo);
+    }
+    
+    public MyPoint getTreasure() throws Exception{
+        for (int i = 0; i < map.length; i++){
+            for (int j = 0; j < map[0].length; j++){
+                if (map[i][j] == 1){
+                    return (new MyPoint(i, j));
+                }
+            }
+        }
+        return (new MyPoint(1000, 1000));
+    }
+    
+    
+    
+    
+    
+    
+    
     
     public void ActionturnLeft() throws Exception{
         post("turn_left");        
@@ -76,7 +102,6 @@ public class Comunication {
     
     public void ActionStep() throws Exception{
         post("step");
-        
     }
     
     private void post(String s) throws Exception{
