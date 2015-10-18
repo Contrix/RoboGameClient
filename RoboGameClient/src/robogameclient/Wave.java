@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author Jirka
  */
 public class Wave {
-    private int[][] myMap;
+    private int[][] stepMap;
     private int step;
     ArrayList<MyPoint> list = new ArrayList<>();
     ArrayList<MyPoint> old = new ArrayList<>();
@@ -23,7 +23,7 @@ public class Wave {
     public String getAction(int[][] array, MyPoint s, MyPoint e, int orientation){
         getMap(array, s, e);
         setCourse(s, e, orientation);
-        //printMap(e);
+        printMap(e);
         
         switch(orientation){
             case 0://sever
@@ -97,43 +97,45 @@ public class Wave {
     }
     
     private void initialize(int[][] array){
-        myMap = new int[array.length][array[0].length];
+        stepMap = new int[array.length][array[0].length];   
         list.clear();
         old.clear();
+        add.clear();
         step = 0;
     }
     
     private int getMap(int[][] array, MyPoint s, MyPoint e){
         initialize(array);
         list.add(s);
-        myMap[s.getY()][s.getX()] = - 1;
+        stepMap[s.getY()][s.getX()] = - 1;
         array[e.getY()][e.getX()] = 0;
+        
         while (!list.isEmpty()){
             step++;
             for (MyPoint p : list){
                 if (!(e.getX() == p.getX() && e.getY() == p.getY())){
                     if (p.getX() + 1 < array[0].length){
-                        if(array[p.getY()][p.getX() + 1] == 0 && myMap[p.getY()][p.getX() + 1] == 0){
+                        if(array[p.getY()][p.getX() + 1] == 0 && stepMap[p.getY()][p.getX() + 1] == 0){
                             add.add(new MyPoint(p.getY(), p.getX() + 1));
-                            myMap[p.getY()][p.getX() + 1] = step;
+                            stepMap[p.getY()][p.getX() + 1] = step;
                         }
                     }
                     if(p.getX() - 1 >= 0){
-                        if(array[p.getY()][p.getX() - 1] == 0 && myMap[p.getY()][p.getX() - 1] == 0){
+                        if(array[p.getY()][p.getX() - 1] == 0 && stepMap[p.getY()][p.getX() - 1] == 0){
                             add.add(new MyPoint(p.getY(), p.getX() - 1));
-                            myMap[p.getY()][p.getX() - 1] = step;
+                            stepMap[p.getY()][p.getX() - 1] = step;
                         }
                     }
                     if (p.getY() + 1 < array.length){
-                        if(array[p.getY() + 1][p.getX()] == 0 && myMap[p.getY() + 1][p.getX()] == 0){
+                        if(array[p.getY() + 1][p.getX()] == 0 && stepMap[p.getY() + 1][p.getX()] == 0){
                             add.add(new MyPoint(p.getY() + 1, p.getX()));
-                            myMap[p.getY() + 1][p.getX()] = step;
+                            stepMap[p.getY() + 1][p.getX()] = step;
                         }
                     }
                     if (p.getY() - 1 >= 0){
-                        if(array[p.getY() - 1][p.getX()] == 0 && myMap[p.getY() - 1][p.getX()] == 0){
+                        if(array[p.getY() - 1][p.getX()] == 0 && stepMap[p.getY() - 1][p.getX()] == 0){
                             add.add(new MyPoint(p.getY() - 1, p.getX()));
-                            myMap[p.getY() - 1][p.getX()] = step;
+                            stepMap[p.getY() - 1][p.getX()] = step;
                         }
                     }
                 }
@@ -152,46 +154,53 @@ public class Wave {
     }
     
     private void setCourse(MyPoint s, MyPoint e, int o){
+        //1.
         point.setPoint(e);
-        for (int i = 0; i < myMap[e.getY()][e.getX()] - 1; i++){
-            if (point.getX() + 1 < myMap[0].length){
-                if(myMap[point.getY()][point.getX() + 1] != 0 && myMap[point.getY()][point.getX() + 1] < myMap[point.getY()][point.getX()]){
+        for (int i = 0; i < stepMap[e.getY()][e.getX()] - 1; i++){
+            if (point.getX() + 1 < stepMap[0].length){
+                if(stepMap[point.getY()][point.getX() + 1] != 0 && stepMap[point.getY()][point.getX() + 1] < stepMap[point.getY()][point.getX()]){
                     point.incX();
                     //System.out.println("x+");
                     continue;
                 }
             }
             if(point.getX() - 1 >= 0){
-                if(myMap[point.getY()][point.getX() - 1] != 0 && myMap[point.getY()][point.getX() - 1] < myMap[point.getY()][point.getX()]){
+                if(stepMap[point.getY()][point.getX() - 1] != 0 && stepMap[point.getY()][point.getX() - 1] < stepMap[point.getY()][point.getX()]){
                     point.decX();
                     //System.out.println("x-");
                     continue;
                 }
             }
-            if (point.getY() + 1 < myMap[0].length){
-                if(myMap[point.getY() + 1][point.getX()] !=0 && myMap[point.getY() + 1][point.getX()] < myMap[point.getY()][point.getX()]){
+            if (point.getY() + 1 < stepMap[0].length){
+                if(stepMap[point.getY() + 1][point.getX()] !=0 && stepMap[point.getY() + 1][point.getX()] < stepMap[point.getY()][point.getX()]){
                     point.incY();
                     //System.out.println("y+");
                     continue;
                 }
             }
             if (point.getY() - 1 >= 0){
-                if(myMap[point.getY() - 1][point.getX()] != 0 && myMap[point.getY() - 1][point.getX()] < myMap[point.getY()][point.getX()]){
+                if(stepMap[point.getY() - 1][point.getX()] != 0 && stepMap[point.getY() - 1][point.getX()] < stepMap[point.getY()][point.getX()]){
                     point.decY();
                     //System.out.println("y-");
                 }
             }
         }
-        System.out.println(point);
+        //System.out.println(point);
+        
+        //2.
+        /*point.setPoint(e);
+        for (int i = 0; i < stepMap[e.getY()][e.getX()] - 1; i++){
+            
+        }*/
+        
     }
     
     private void printMap(MyPoint e){
-        for (int i = 0; i < myMap.length; i++){
-            for (int j = 0; j < myMap[0].length; j++){
-                System.out.printf(" %2d", myMap[i][j]);
+        for (int i = 0; i < stepMap.length; i++){
+            for (int j = 0; j < stepMap[0].length; j++){
+                System.out.printf(" %2d", stepMap[i][j]);
             }
             System.out.println();
         }
-        System.out.println("mapa");
     }
 }

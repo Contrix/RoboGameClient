@@ -12,10 +12,10 @@ import javafx.scene.canvas.GraphicsContext;
  * @author Jirka
  */
 public class Game {
-    private Comunication com = new Comunication();
+    private final Comunication com = new Comunication();
     private final Drawing drw = new Drawing();
     private final Wave wave = new Wave();
-    private static GraphicsContext gc;
+    private final GraphicsContext gc;
     
     public Game(GraphicsContext gc) throws Exception{
         this.gc = gc;
@@ -41,7 +41,7 @@ public class Game {
                     break;
             }
         } */   
-       for (int i = 0; i < 2; i++){
+       for (int i = 0; i < 3; i++){
             com.refreshData();
             switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
                 case "step":
@@ -57,9 +57,12 @@ public class Game {
                     break;
             }
             drw.drawArray(gc, com.getMap(), com.getBotInfo());
-            Thread.sleep(1000);
-            System.out.println("ssss");
-            
+            //Thread.sleep(1000);
+            //System.out.println("ssss");   
         }
+       System.out.println(com.getBotInfo()[0] + " - " + com.getBotInfo()[1] + "tato");
     }
 }
+/*
+*nevykresluje po každém tahu
+*/
