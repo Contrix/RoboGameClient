@@ -28,6 +28,7 @@ public class Comunication {
         String jsonData = "";
         String inputLine;
         URLConnection connectionToServer = new URL(server).openConnection();
+        connectionToServer.setUseCaches(false);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
             while ((inputLine = in.readLine()) != null){
                 jsonData += inputLine + "\n";
@@ -60,11 +61,11 @@ public class Comunication {
             JSONArray a = bot_map.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
                 map[i][j] = a.getInt(j);
-                System.out.printf("%s, ", map[i][j]);
+                //System.out.printf("%s, ", map[i][j]);
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println();
+        //System.out.println();
         return(map);
     }
     
@@ -105,6 +106,7 @@ public class Comunication {
     }
     
     private void post(String s) throws Exception{
+        System.out.println(s);
         URLConnection connectionAction = new URL(server + "action").openConnection();
         connectionAction.setDoOutput(true);
         try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {

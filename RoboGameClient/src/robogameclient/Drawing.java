@@ -13,28 +13,52 @@ import javafx.scene.paint.Color;
  * @author Jirka
  */
 public class Drawing {
-    
     private int pixel = 20;
-    
-    public void drawArray(GraphicsContext gc, double width, double height, int[][] array){
-        checkPixel(width, height, array);
+    private final double width = 800;
+    private final double height = 800;
+
+    public void drawArray(GraphicsContext gc, int[][] array, int[] botInfo) throws Exception{
+        checkPixel(array);
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, width, height);
         for (int i = 0; i < array.length; i++){
             for (int j = 0; j < array[0].length; j++){
-                if (array[i][j] == 0){
-                    gc.setFill(Color.GREEN);
-                }
-                else if (array[i][j] == 1){
-                    gc.setFill(Color.LIGHTGREY);
+                switch(array[i][j]){
+                    case 0://volno
+                        gc.setFill(Color.GREEN);
+                        break;
+                    case 1://poklad
+                        gc.setFill(Color.YELLOW);
+                        break;
+                    case 2://bot
+                        gc.setFill(Color.LIGHTGREY);
+                        break;
+                    default:
+                        break;
                 }
                 gc.fillRect(j * pixel, i * pixel, pixel, pixel);
             }
         }
-        
+        gc.setFill(Color.BLACK);
+        switch(botInfo[2]){
+            case 0:
+                gc.fillOval(botInfo[0] * pixel + pixel*3/8, botInfo[1] * pixel, pixel/4, pixel/4);
+                break;
+            case 1:
+                gc.fillOval(botInfo[0] * pixel + pixel*3/4, botInfo[1] * pixel + pixel*3/8, pixel/4, pixel/4);
+                break;
+            case 2:
+                gc.fillOval(botInfo[0] * pixel  + pixel*3/8, botInfo[1] * pixel + pixel*3/4, pixel/4, pixel/4);
+                break;
+            case 3:
+                gc.fillOval(botInfo[0] * pixel, botInfo[1] * pixel + pixel*3/8, pixel/4, pixel/4);
+                break;
+            default:
+                break;
+        }
     }
     
-    private void checkPixel(double width, double height, int[][] array){
+    private void checkPixel(int[][] array){
         while (array[0].length * pixel + pixel > width){
             pixel--;
         }

@@ -5,45 +5,49 @@
  */
 package robogameclient;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import static javafx.scene.input.KeyCode.ESCAPE;
+import static javafx.scene.input.KeyCode.F5;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  *
  * @author Jirka
  */
 public class RoboGameClient extends Application {
-    private final Game game = new Game();
- 
+    
     @Override
     public void start(Stage primaryStage) throws Exception{
         StackPane root = new StackPane();
-        Scene scene = new Scene(root, 540, 620);
+        Scene scene = new Scene(root, 800, 800);
         Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
+        final Game game = new Game(gc);
         
-        game.startGame();
-        
-        //drw.drawArray(gc, scene.getWidth(), scene.getHeight(), array);//
-        
-        /*Timeline timer = new Timeline(new KeyFrame(Duration.millis(100), (ActionEvent event) -> {//
-            drw.drawArray(gc, scene.getWidth(), scene.getHeight(), array);
-            
-            canvas.setWidth(array[0].length * drw.getPixel());
-            canvas.setHeight(array.length * drw.getPixel());
-        }));
-        timer.setCycleCount(Timeline.INDEFINITE);
-        timer.play();*/
-        
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
+            switch (e.getCode()) {   
+                case F5:
+                try {
+                    game.startGame();
+                } catch (Exception ex) {
+                    System.out.println("Chyba, hra nemůže začít.");
+                }
+                    break;
+                    
+                case ESCAPE:
+                    primaryStage.close();
+                    break;
+                default:
+                    break;
+            }
+        });
+
         root.setAlignment(Pos.CENTER);
         root.getChildren().add(canvas);
         primaryStage.setTitle("RoboGame");
