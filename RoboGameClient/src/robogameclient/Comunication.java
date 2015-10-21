@@ -106,7 +106,8 @@ public class Comunication {
     }
     
     private void post(String s) throws Exception{
-        System.out.println(s);
+        System.out.println("sending: " + s);
+        String jsonData = "";
         URLConnection connectionAction = new URL(server + "action").openConnection();
         connectionAction.setDoOutput(true);
         try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
@@ -116,8 +117,10 @@ public class Comunication {
         BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()));
         String decodedString;
         while ((decodedString = in.readLine()) != null) {
-            System.out.printf(decodedString);
+            //System.out.printf(decodedString);
+            jsonData += decodedString + "\n";
         }
         in.close();
+        System.out.println("state: " + new JSONObject(jsonData).getString("state"));
     }
 }
