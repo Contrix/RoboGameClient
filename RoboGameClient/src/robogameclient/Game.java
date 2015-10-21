@@ -39,19 +39,19 @@ public class Game {
                     break;
                 default:
                     break;
-            }
-        } */   
-       for (int i = 0; i < 3; i++){
+            }*/
+        
+       for (int i = 0; i < 1; i++){
             com.refreshData();
             switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
                 case "step":
                     com.ActionStep();
                     break;
                 case "rotateLeft":
-                    com.ActionturnLeft();
+                    com.ActionTurnLeft();
                     break;
                 case "rotateRight":
-                    com.ActionturnRight();
+                    com.ActionTurnRight();
                     break;
                 default:
                     break;
@@ -60,9 +60,9 @@ public class Game {
             //Thread.sleep(1000);
             //System.out.println("ssss");   
         }
-       System.out.println(com.getBotInfo()[0] + " - " + com.getBotInfo()[1] + "tato");
     }
 }
 /*
-*nevykresluje po každém tahu
+* nevykresluje po každém tahu
+* divně se pohybuje
 */

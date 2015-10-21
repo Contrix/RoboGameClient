@@ -22,8 +22,8 @@ public class Wave {
     
     public String getAction(int[][] array, MyPoint s, MyPoint e, int orientation){
         getMap(array, s, e);
-        setCourse(s, e, orientation);
-        printMap(e);
+        setCourse(s, orientation);
+        //printMap(e);
         
         switch(orientation){
             case 0://sever
@@ -106,14 +106,14 @@ public class Wave {
     
     private int getMap(int[][] array, MyPoint s, MyPoint e){
         initialize(array);
-        list.add(s);
-        stepMap[s.getY()][s.getX()] = - 1;
-        array[e.getY()][e.getX()] = 0;
+        list.add(e);
+        stepMap[e.getY()][e.getX()] = - 1;
+        array[s.getY()][s.getX()] = 0;
         
         while (!list.isEmpty()){
             step++;
             for (MyPoint p : list){
-                if (!(e.getX() == p.getX() && e.getY() == p.getY())){
+                if (!(s.getX() == p.getX() && s.getY() == p.getY())){
                     if (p.getX() + 1 < array[0].length){
                         if(array[p.getY()][p.getX() + 1] == 0 && stepMap[p.getY()][p.getX() + 1] == 0){
                             add.add(new MyPoint(p.getY(), p.getX() + 1));
@@ -153,9 +153,65 @@ public class Wave {
         return 1;//cíl nenalezen
     }
     
-    private void setCourse(MyPoint s, MyPoint e, int o){
+    private void setCourse(MyPoint s, int o){
+        if(s.getY() - 1 >= 0){
+            if(stepMap[s.getY() - 1][s.getX()] < stepMap[s.getY()][s.getX()] && stepMap[s.getY() - 1][s.getX()] != 0){
+                point = new MyPoint(s.getY() - 1, s.getX());
+            }
+        }
+        else if (s.getX() + 1 < stepMap[0].length){
+            if(stepMap[s.getY()][s.getX() + 1] < stepMap[s.getY()][s.getX()] && stepMap[s.getY()][s.getX() + 1] != 0){
+                point = new MyPoint(s.getY(), s.getX() + 1);
+            }
+        }
+        else if(s.getY() + 1 < stepMap.length){
+            if(stepMap[s.getY() + 1][s.getX()] < stepMap[s.getY()][s.getX()] && stepMap[s.getY() + 1][s.getX()] != 0){
+                point = new MyPoint(s.getY() + 1, s.getX());
+            }
+        }
+        else if (s.getX() - 1 >= 0){
+            if(stepMap[s.getY()][s.getX() - 1] < stepMap[s.getY()][s.getX()] && stepMap[s.getY()][s.getX() - 1] != 0){
+                point = new MyPoint(s.getY(), s.getX() - 1);
+            }
+        }
+        
+        switch(o){
+            case 0:
+                if(s.getY() - 1 >= 0){
+                    if(stepMap[s.getY() - 1][s.getX()] < stepMap[s.getY()][s.getX()] && stepMap[s.getY() - 1][s.getX()] != 0){
+                        point = new MyPoint(s.getY() - 1, s.getX());
+                    }
+                }
+                break;
+            case 1:
+                if (s.getX() + 1 < stepMap[0].length){
+                    if(stepMap[s.getY()][s.getX() + 1] < stepMap[s.getY()][s.getX()] && stepMap[s.getY()][s.getX() + 1] != 0){
+                        point = new MyPoint(s.getY(), s.getX() + 1);
+                    }
+                }
+                break;
+            case 2:
+                if(s.getY() + 1 < stepMap.length){
+                    if(stepMap[s.getY() + 1][s.getX()] < stepMap[s.getY()][s.getX()] && stepMap[s.getY() + 1][s.getX()] != 0){
+                        point = new MyPoint(s.getY() + 1, s.getX());
+                    }
+                }
+                break;
+            case 3:
+                if (s.getX() - 1 >= 0){
+                    if(stepMap[s.getY()][s.getX() - 1] < stepMap[s.getY()][s.getX()] && stepMap[s.getY()][s.getX() - 1] != 0){
+                        point = new MyPoint(s.getY(), s.getX() - 1);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        
+        
+        
         //1.
-        point.setPoint(e);
+        /*point.setPoint(e);
         for (int i = 0; i < stepMap[e.getY()][e.getX()] - 1; i++){
             if (point.getX() + 1 < stepMap[0].length){
                 if(stepMap[point.getY()][point.getX() + 1] != 0 && stepMap[point.getY()][point.getX() + 1] < stepMap[point.getY()][point.getX()]){
@@ -184,7 +240,7 @@ public class Wave {
                     //System.out.println("y-");
                 }
             }
-        }
+        }*/
         //System.out.println(point);
         
         //2.

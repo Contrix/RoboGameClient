@@ -93,11 +93,11 @@ public class Comunication {
     
     
     
-    public void ActionturnLeft() throws Exception{
+    public void ActionTurnLeft() throws Exception{
         post("turn_left");        
     }
     
-    public void ActionturnRight() throws Exception{
+    public void ActionTurnRight() throws Exception{
         post("turn_right");
     }
     
@@ -116,7 +116,7 @@ public class Comunication {
         BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()));
         String decodedString;
         while ((decodedString = in.readLine()) != null) {
-            //System.out.printf(decodedString);
+            System.out.printf(decodedString);
         }
         in.close();
     }
