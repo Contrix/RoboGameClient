@@ -20,9 +20,11 @@ import org.json.JSONObject;
  */
 public class Comunication {
     private final String server = "http://hroch.spseol.cz:44822/";
+    //private final String server = "https://pybots.localtunnel.me/";
     private long id;
     private int map[][];
     private JSONObject obj;
+    private boolean win = false;
 
     public void initialise() throws Exception{
         String jsonData = "";
@@ -35,6 +37,7 @@ public class Comunication {
             }
         }
         id = new JSONObject(jsonData).getLong("bot_id");
+        System.out.println("bot_id: " + id);
         
         refreshData();
         getMap();
@@ -70,7 +73,19 @@ public class Comunication {
     }
     
     public int[] getBotInfo() throws Exception{
-        JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);
+        //JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);
+        
+        
+        JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);;
+        for (int i = 0; i < obj.getJSONArray("bots").length(); i++){
+            if(obj.getJSONArray("bots").getJSONObject(i).getBoolean("your_bot")){
+                myBot = obj.getJSONArray("bots").getJSONObject(i);
+                break;
+            }
+            else{
+                myBot = null;
+            }
+        }
         int[] myBotInfo = {myBot.getInt("x"), myBot.getInt("y"), myBot.getInt("orientation")};
         return (myBotInfo);
     }
@@ -106,7 +121,7 @@ public class Comunication {
     }
     
     private void post(String s) throws Exception{
-        System.out.println("sending: " + s);
+        //System.out.println("sending: " + s);
         String jsonData = "";
         URLConnection connectionAction = new URL(server + "action").openConnection();
         connectionAction.setDoOutput(true);
@@ -121,6 +136,16 @@ public class Comunication {
             jsonData += decodedString + "\n";
         }
         in.close();
-        System.out.println("state: " + new JSONObject(jsonData).getString("state"));
+        obj = new JSONObject(jsonData);
+        //System.out.println("state: " + obj.getString("state"));
+        
+        System.out.printf("%20s  state: %s\n", "sending: " + s, obj.getString("state"));
+        if(obj.getString("state") == "game_won"){
+            win = true;
+        }
+    }
+    
+    public boolean getWin(){
+        return win;
     }
 }
