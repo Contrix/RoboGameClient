@@ -16,13 +16,13 @@ import javafx.scene.text.TextAlignment;
  * @author Jirka
  */
 public class Drawing {
-    private int pixel;
+    private int pixel = 50;
     private double width;
     private double height;
     private int moveX;
     private int moveY;
 
-    public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo) throws Exception{
+    public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo){
         checkPixel(gc, array[0].length, array.length);
         
         gc.setFill(Color.ANTIQUEWHITE);
@@ -38,18 +38,21 @@ public class Drawing {
         
         while (pixel * x > width - pixel){
             pixel--;
+            System.out.println("-1");
         }
         while (pixel * (y + 2) > height){
             pixel--;
+            System.out.println("-2");
         }
         while (pixel * x + pixel < width && pixel * (y + 2) + pixel < height){
             pixel++;
+            System.out.println("+");
         }
         moveX = (int)(width - x * pixel)/2; 
         moveY = (int)(height - y * pixel)/2;
     }
     
-    private void drawArray(GraphicsContext gc, int[][] array, int[] botInfo) throws Exception{
+    private void drawArray(GraphicsContext gc, int[][] array, int[] botInfo){
         for (int i = 0; i < array.length; i++){
             for (int j = 0; j < array[0].length; j++){
                 switch(array[i][j]){
@@ -60,6 +63,9 @@ public class Drawing {
                         gc.setFill(Color.YELLOW);
                         break;
                     case 2://bot
+                        gc.setFill(Color.ORANGE);
+                        break;
+                    case 3://blok
                         gc.setFill(Color.LIGHTGREY);
                         break;
                     default:

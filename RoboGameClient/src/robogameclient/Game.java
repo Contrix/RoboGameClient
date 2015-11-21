@@ -5,13 +5,7 @@
  */
 package robogameclient;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.util.Duration;
 
 /**
  *
@@ -23,83 +17,89 @@ public class Game {
     private final Wave wave = new Wave();
     private final GraphicsContext gc;
     
-    public Game(GraphicsContext gc) throws Exception{
+    public Game(GraphicsContext gc){
         this.gc = gc;
         com.initialise();
         drw.drawAll(gc, com.getMap(), com.getBotInfo());
     }
     
-    public void startGame() throws Exception{
-        /*while (com.getTreasure().getX() != com.getBotInfo()[0] && com.getTreasure().getY() != com.getBotInfo()[1]){
+    public void startGame(){
+        while(!com.getWin()){
             com.refreshData();
-            switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[0], com.getBotInfo()[1]), com.getTreasure(), com.getBotInfo()[2])){
+            switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
                 case "step":
                     com.ActionStep();
                     break;
                 case "rotateLeft":
-                    com.ActionturnLeft();
+                    com.ActionTurnLeft();
                     break;
                 case "rotateRight":
-                    com.ActionturnRight();
+                    com.ActionTurnRight();
                     break;
                 default:
                     break;
-            }*/
-        if(!com.getWin()){
-            for (int i = 0; i < 1; i++){
-                com.refreshData();
-                switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
-                    case "step":
-                        com.ActionStep();
-                        break;
-                    case "rotateLeft":
-                        com.ActionTurnLeft();
-                        break;
-                    case "rotateRight":
-                        com.ActionTurnRight();
-                        break;
-                    default:
-                        break;
-                }
-                //Thread.sleep(1000);
-                //System.out.println("ssss");   
             }
+            /*try{
+                Thread.sleep(1000);
+            }
+            catch (Exception ex){
+                
+            }*/
+            rePaint();
         }
-       com.refreshData();
-       drw.drawAll(gc, com.getMap(), com.getBotInfo());
     }
     
-    public void rePaint()throws Exception{
-        drw.drawAll(gc, com.getMap(), com.getBotInfo());
-    }
-    
-    public void step() throws Exception{
-        com.refreshData();
-        wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+    public void nextStep(){
         if(!com.getWin()){
+            com.refreshData();
+            switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
+                case "step":
+                    com.ActionStep();
+                    break;
+                case "rotateLeft":
+                    com.ActionTurnLeft();
+                    break;
+                case "rotateRight":
+                    com.ActionTurnRight();
+                    break;
+                default:
+                    break;
+                }
+            rePaint();
+        }
+    }
+    
+    public void rePaint(){
+        if(!com.getWin()){
+            com.refreshData();
+            drw.drawAll(gc, com.getMap(), com.getBotInfo());
+        }
+    }
+    
+    public void step(){
+        if(!com.getWin()){
+            com.refreshData();
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionStep();
         }
-        com.refreshData();
-        drw.drawAll(gc, com.getMap(), com.getBotInfo());
+        rePaint();
     }
     
-    public void turnLeft() throws Exception{
-        com.refreshData();
-        wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+    public void turnLeft(){
         if(!com.getWin()){
+            com.refreshData();
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionTurnLeft();
         }
-        com.refreshData();
-        drw.drawAll(gc, com.getMap(), com.getBotInfo());
+        rePaint();
     }
     
-    public void turnRight() throws Exception{
-        com.refreshData();
-        wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+    public void turnRight(){
         if(!com.getWin()){
+            com.refreshData();
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionTurnRight();
         }
-        com.refreshData();
-        drw.drawAll(gc, com.getMap(), com.getBotInfo());
+        rePaint();
     }
 }

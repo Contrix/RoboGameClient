@@ -16,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import static javafx.scene.input.KeyCode.ESCAPE;
-import static javafx.scene.input.KeyCode.F5;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -37,13 +36,9 @@ public class RoboGameClient extends Application {
         final Game game = new Game(gc);
         
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
-            try {
-                canvas.setWidth(scene.getWidth());
-                canvas.setHeight(scene.getHeight());
-                game.rePaint();
-            } catch (Exception ex) {
-                Logger.getLogger(RoboGameClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            canvas.setWidth(scene.getWidth());
+            canvas.setHeight(scene.getHeight());
+            game.rePaint();
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
@@ -52,12 +47,11 @@ public class RoboGameClient extends Application {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
                 case N:
-                try {
+                    game.nextStep();
+                    break;
+                    
+                case S:
                     game.startGame();
-                } catch (Exception ex) {
-                    System.out.println("Chyba, hra nemůže pokračovat.");
-                    Logger.getLogger(RoboGameClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
                     break;
                     
                 case ESCAPE:
@@ -65,33 +59,16 @@ public class RoboGameClient extends Application {
                     break;
                     
                 case UP:
-            {
-                try {
                     game.step();
-                } catch (Exception ex) {
-                    Logger.getLogger(RoboGameClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
                     break;
+                    
                 case LEFT:
-            {
-                try {
                     game.turnLeft();
-                } catch (Exception ex) {
-                    Logger.getLogger(RoboGameClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
                     break;
+                    
                 case RIGHT:
-            {
-                try {
                     game.turnRight();
-                } catch (Exception ex) {
-                    Logger.getLogger(RoboGameClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
                     break;
-                
                     
                 default:
                     break;

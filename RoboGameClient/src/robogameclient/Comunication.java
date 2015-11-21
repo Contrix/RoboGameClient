@@ -1,6 +1,7 @@
 package robogameclient;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -20,22 +21,30 @@ import org.json.JSONObject;
  */
 public class Comunication {
     private final String server = "http://hroch.spseol.cz:44822/";
-    //private final String server = "https://pybots.localtunnel.me/";
     private long id;
+    private int postRequest = 0;
     private int map[][];
     private JSONObject obj;
     private boolean win = false;
+    
+    /*****GET*****/
 
-    public void initialise() throws Exception{
+    public void initialise(){
         String jsonData = "";
         String inputLine;
-        URLConnection connectionToServer = new URL(server).openConnection();
-        connectionToServer.setUseCaches(false);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
-            while ((inputLine = in.readLine()) != null){
-                jsonData += inputLine + "\n";
+        try{
+            URLConnection connectionToServer = new URL(server).openConnection();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
+                while ((inputLine = in.readLine()) != null){
+                    jsonData += inputLine + "\n";
+                }
+            } catch (IOException ex) {
+                System.err.println("Nepodařilo se přečíst data - " + ex);
             }
+        } catch (Exception ex) {
+            System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
+        
         id = new JSONObject(jsonData).getLong("bot_id");
         System.out.println("bot_id: " + id);
         
@@ -43,20 +52,25 @@ public class Comunication {
         getMap();
     }
     
-    public void refreshData() throws Exception{
+    public void refreshData(){
         String jsonData = "";
         String inputLine = "";
-        URLConnection connectionGetMap = new URL(server + "game/" + String.valueOf(id)).openConnection();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
-            while ((inputLine = in.readLine()) != null){
-                //System.out.println(inputLine);
-                jsonData += inputLine + "\n";
+        try{
+            URLConnection connectionGetMap = new URL(server + "game/" + String.valueOf(id)).openConnection();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
+                while ((inputLine = in.readLine()) != null){
+                    jsonData += inputLine + "\n";
+                }
+                obj = new JSONObject(jsonData);
+            } catch (IOException ex) {
+                System.err.println("Nepodařilo se přečíst data - " + ex);
             }
+        } catch (Exception ex) {
+            System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
-        obj = new JSONObject(jsonData);
     }
 
-    public int[][] getMap() throws Exception{
+    public int[][] getMap(){
         map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
         
         JSONArray bot_map = obj.getJSONArray("map");
@@ -64,33 +78,24 @@ public class Comunication {
             JSONArray a = bot_map.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
                 map[i][j] = a.getInt(j);
-                //System.out.printf("%s, ", map[i][j]);
             }
-            //System.out.println();
         }
-        //System.out.println();
         return(map);
     }
     
-    public int[] getBotInfo() throws Exception{
-        //JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);
-        
-        
+    public int[] getBotInfo(){
         JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);;
         for (int i = 0; i < obj.getJSONArray("bots").length(); i++){
             if(obj.getJSONArray("bots").getJSONObject(i).getBoolean("your_bot")){
                 myBot = obj.getJSONArray("bots").getJSONObject(i);
                 break;
             }
-            else{
-                myBot = null;
-            }
         }
         int[] myBotInfo = {myBot.getInt("x"), myBot.getInt("y"), myBot.getInt("orientation")};
         return (myBotInfo);
     }
     
-    public MyPoint getTreasure() throws Exception{
+    public MyPoint getTreasure(){
         for (int i = 0; i < map.length; i++){
             for (int j = 0; j < map[0].length; j++){
                 if (map[i][j] == 1){
@@ -101,47 +106,51 @@ public class Comunication {
         return (new MyPoint(1000, 1000));
     }
     
+    /*****POST*****/
     
-    
-    
-    
-    
-    
-    
-    public void ActionTurnLeft() throws Exception{
+    public void ActionTurnLeft(){
         post("turn_left");        
     }
     
-    public void ActionTurnRight() throws Exception{
+    public void ActionTurnRight(){
         post("turn_right");
     }
     
-    public void ActionStep() throws Exception{
+    public void ActionStep(){
         post("step");
     }
     
-    private void post(String s) throws Exception{
-        //System.out.println("sending: " + s);
-        String jsonData = "";
-        URLConnection connectionAction = new URL(server + "action").openConnection();
-        connectionAction.setDoOutput(true);
-        try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
-            out.write("bot_id=" + id + "&action=" + s);
-        }
-        
-        BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()));
-        String decodedString;
-        while ((decodedString = in.readLine()) != null) {
-            //System.out.printf(decodedString);
-            jsonData += decodedString + "\n";
-        }
-        in.close();
-        obj = new JSONObject(jsonData);
-        //System.out.println("state: " + obj.getString("state"));
-        
-        System.out.printf("%20s  state: %s\n", "sending: " + s, obj.getString("state"));
-        if(obj.getString("state") == "game_won"){
-            win = true;
+    private void post(String s){
+        try{
+            URLConnection connectionAction = new URL(server + "action").openConnection();
+            connectionAction.setDoOutput(true);
+            try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
+                out.write("bot_id=" + id + "&action=" + s);
+            } catch (IOException ex) {
+                System.err.println("Nepodařilo se odeslat data - " + ex);
+            }
+            
+            String jsonData = "";
+            String inputLine;
+            
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()))) {
+                while ((inputLine = in.readLine()) != null){
+                    jsonData += inputLine + "\n";
+                }
+            } catch (IOException ex) {
+                System.err.println("Nepodařilo se přečíst data - " + ex);
+            }
+            
+            obj = new JSONObject(jsonData);
+            
+            postRequest ++;
+            System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
+            
+            if(obj.getString("state").equals("game_won")){
+                win = true;
+            }
+        } catch(IOException ex){
+            System.err.println("Nepodařilo se navázat spojení se servrem (POST) - " + ex);
         }
     }
     

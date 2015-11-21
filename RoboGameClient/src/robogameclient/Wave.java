@@ -21,7 +21,9 @@ public class Wave {
     private MyPoint point = new MyPoint(0, 0);
     
     public String getAction(int[][] array, MyPoint s, MyPoint e, int orientation){
-        getMap(array, s, e);
+        if (getMap(array, s, e) == 1){
+            return ("rotateLeft");
+        }
         setCourse(s, orientation);
         //printMap(e);
         switch(orientation){
