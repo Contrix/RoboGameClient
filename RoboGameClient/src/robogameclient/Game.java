@@ -25,27 +25,7 @@ public class Game {
     
     public void startGame(){
         while(!com.getWin()){
-            com.refreshData();
-            switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
-                case "step":
-                    com.ActionStep();
-                    break;
-                case "rotateLeft":
-                    com.ActionTurnLeft();
-                    break;
-                case "rotateRight":
-                    com.ActionTurnRight();
-                    break;
-                default:
-                    break;
-            }
-            /*try{
-                Thread.sleep(1000);
-            }
-            catch (Exception ex){
-                
-            }*/
-            rePaint();
+            nextStep();
         }
     }
     
@@ -70,10 +50,14 @@ public class Game {
     }
     
     public void rePaint(){
-        if(!com.getWin()){
-            com.refreshData();
-            drw.drawAll(gc, com.getMap(), com.getBotInfo());
-        }
+        Thread mojeVlakno = new Thread(() -> {
+            if(!com.getWin()){
+                com.refreshData();
+                drw.drawAll(gc, com.getMap(), com.getBotInfo());
+            }
+        }, "ThirdThread");
+        mojeVlakno.setDaemon(true);
+        mojeVlakno.start();
     }
     
     public void step(){
@@ -103,3 +87,10 @@ public class Game {
         rePaint();
     }
 }
+
+            /*try{
+                Thread.sleep(1000);
+            }
+            catch (Exception ex){
+                
+            }*/

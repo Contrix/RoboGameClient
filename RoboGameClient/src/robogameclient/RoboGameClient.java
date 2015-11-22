@@ -5,8 +5,6 @@
  */
 package robogameclient;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -28,7 +26,7 @@ import javafx.util.Duration;
 public class RoboGameClient extends Application {
     
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage){
         StackPane root = new StackPane();
         Scene scene = new Scene(root, 800, 800);
         Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
@@ -51,7 +49,11 @@ public class RoboGameClient extends Application {
                     break;
                     
                 case S:
-                    game.startGame();
+                    Thread mojeVlakno = new Thread(() -> {
+                        game.startGame();
+                    }, "SecondThread");
+                    mojeVlakno.setDaemon(true);
+                    mojeVlakno.start();
                     break;
                     
                 case ESCAPE:

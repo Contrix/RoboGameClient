@@ -16,7 +16,7 @@ import javafx.scene.text.TextAlignment;
  * @author Jirka
  */
 public class Drawing {
-    private int pixel = 50;
+    private int pixel;
     private double width;
     private double height;
     private int moveX;
@@ -24,10 +24,10 @@ public class Drawing {
 
     public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo){
         checkPixel(gc, array[0].length, array.length);
-        
+
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
-        
+
         drawArray(gc, array, botInfo);
         drawInfo(gc);
     }
@@ -38,15 +38,16 @@ public class Drawing {
         
         while (pixel * x > width - pixel){
             pixel--;
-            System.out.println("-1");
+            //System.out.println("-1");
         }
         while (pixel * (y + 2) > height){
             pixel--;
-            System.out.println("-2");
+            //System.out.println("-2");
         }
-        while (pixel * x + pixel < width && pixel * (y + 2) + pixel < height){
+        //while (pixel * x + pixel < width && pixel * (y + 2) + pixel < height){
+        while (pixel * x < width - 5 * pixel && pixel * y  < height - 5 * pixel){
             pixel++;
-            System.out.println("+");
+            //System.out.println("+");
         }
         moveX = (int)(width - x * pixel)/2; 
         moveY = (int)(height - y * pixel)/2;
