@@ -58,7 +58,7 @@ public class Drawing {
             for (int j = 0; j < array[0].length; j++){
                 switch(array[i][j]){
                     case 0://volno
-                        gc.setFill(Color.GREEN);
+                        gc.setFill(Color.LIGHTGREY);
                         break;
                     case 1://poklad
                         gc.setFill(Color.YELLOW);
@@ -67,7 +67,7 @@ public class Drawing {
                         gc.setFill(Color.ORANGE);
                         break;
                     case 3://blok
-                        gc.setFill(Color.LIGHTGREY);
+                        gc.setFill(Color.GREY);
                         break;
                     default:
                         break;

@@ -21,7 +21,8 @@ import org.json.JSONObject;
  */
 public class Comunication {
     private final String server = "http://hroch.spseol.cz:44822/";
-    private long id;
+    //private final String server = "http://localhost:44822/";
+    private String id;
     private int postRequest = 0;
     private int map[][];
     private JSONObject obj;
@@ -45,7 +46,7 @@ public class Comunication {
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
         
-        id = new JSONObject(jsonData).getLong("bot_id");
+        id = new JSONObject(jsonData).getString("bot_id");
         System.out.println("bot_id: " + id);
         
         refreshData();
@@ -56,7 +57,7 @@ public class Comunication {
         String jsonData = "";
         String inputLine = "";
         try{
-            URLConnection connectionGetMap = new URL(server + "game/" + String.valueOf(id)).openConnection();
+            URLConnection connectionGetMap = new URL(server + "game/" + id).openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
