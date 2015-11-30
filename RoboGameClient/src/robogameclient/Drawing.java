@@ -40,12 +40,12 @@ public class Drawing {
             pixel--;
             //System.out.println("-1");
         }
-        while (pixel * (y + 2) > height){
+        while (pixel * (y + 2 + 7) > height){
             pixel--;
             //System.out.println("-2");
         }
         //while (pixel * x + pixel < width && pixel * (y + 2) + pixel < height){
-        while (pixel * x < width - 5 * pixel && pixel * y  < height - 5 * pixel){
+        while (pixel * x < width - 5 * pixel && pixel * y  < height - 12 * pixel){
             pixel++;
             //System.out.println("+");
         }
@@ -96,9 +96,9 @@ public class Drawing {
     
     private void drawInfo(GraphicsContext gc){
         gc.setFill(Color.BLACK);
-        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel*3/4));
+        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel*3));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("PyBots", width/2, moveY);
+        gc.fillText("PyBots", width/2, moveY/5*4);
         
         gc.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         gc.setTextAlign(TextAlignment.RIGHT);
