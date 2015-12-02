@@ -24,13 +24,13 @@ public class Game {
     }
     
     public void startGame(){
-        while(!com.getWin()){
+        while(!com.getEndGame()){
             nextStep();
         }
     }
     
     public void nextStep(){
-        if(!com.getWin()){
+        if(!com.getEndGame()){
             com.refreshData();
             switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
                 case "step":
@@ -50,18 +50,18 @@ public class Game {
     }
     
     public void rePaint(){
-        Thread mojeVlakno = new Thread(() -> {
-            if(!com.getWin()){
+        Thread thread = new Thread(() -> {
+            if(!com.getEndGame()){
                 com.refreshData();
                 drw.drawAll(gc, com.getMap(), com.getBotInfo());
             }
         }, "ThirdThread");
-        mojeVlakno.setDaemon(true);
-        mojeVlakno.start();
+        thread.setDaemon(true);
+        thread.start();
     }
     
     public void step(){
-        if(!com.getWin()){
+        if(!com.getEndGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionStep();
@@ -70,7 +70,7 @@ public class Game {
     }
     
     public void turnLeft(){
-        if(!com.getWin()){
+        if(!com.getEndGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionTurnLeft();
@@ -79,7 +79,7 @@ public class Game {
     }
     
     public void turnRight(){
-        if(!com.getWin()){
+        if(!com.getEndGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
             com.ActionTurnRight();

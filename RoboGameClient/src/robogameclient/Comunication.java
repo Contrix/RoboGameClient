@@ -26,7 +26,7 @@ public class Comunication {
     private int postRequest = 0;
     private int map[][];
     private JSONObject obj;
-    private boolean win = false;
+    private boolean endGame = false;
     
     /*****GET*****/
 
@@ -64,9 +64,12 @@ public class Comunication {
                 }
                 obj = new JSONObject(jsonData);
             } catch (IOException ex) {
+                endGame = true;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
+                
             }
         } catch (Exception ex) {
+            endGame = true;
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
     }
@@ -128,6 +131,7 @@ public class Comunication {
             try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
                 out.write("bot_id=" + id + "&action=" + s);
             } catch (IOException ex) {
+                endGame = true;
                 System.err.println("Nepodařilo se odeslat data - " + ex);
             }
             
@@ -138,24 +142,23 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
+                obj = new JSONObject(jsonData);
+                postRequest ++;
+                System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
+                if(obj.getString("state").equals("game_won")){
+                    endGame = true;
+                }
             } catch (IOException ex) {
+                endGame = true;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
             }
-            
-            obj = new JSONObject(jsonData);
-            
-            postRequest ++;
-            System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
-            
-            if(obj.getString("state").equals("game_won")){
-                win = true;
-            }
         } catch(IOException ex){
+            endGame = true;
             System.err.println("Nepodařilo se navázat spojení se servrem (POST) - " + ex);
         }
     }
     
-    public boolean getWin(){
-        return win;
+    public boolean getEndGame(){
+        return endGame;
     }
 }
