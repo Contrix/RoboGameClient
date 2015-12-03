@@ -20,9 +20,9 @@ import javafx.stage.Window;
 public class LogDialog {
     private ObservableList<String> log = FXCollections.observableArrayList();
     private ListView listView = new ListView();
-    
+    private Stage dialog;
     public Stage showDialog(Window parent) {
-        final Stage dialog = new Stage();
+        dialog = new Stage();
         dialog.initOwner(parent);
         dialog.initStyle(StageStyle.UTILITY);
         dialog.setTitle("Log");
@@ -43,5 +43,10 @@ public class LogDialog {
         }catch(Exception ex){
            System.out.println("..." + ex);
         }
+    }
+    
+    public void closeDialog(){
+        dialog.close();
+        System.out.println("2");
     }
 }

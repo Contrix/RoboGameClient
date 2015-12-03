@@ -9,6 +9,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -58,6 +59,7 @@ public class RoboGameClient extends Application {
                     break;
                     
                 case ESCAPE:
+                    logDialog.closeDialog();
                     primaryStage.close();
                     break;
                     
@@ -84,10 +86,10 @@ public class RoboGameClient extends Application {
                     game.setAutoNewGame();
                     break;
                 case F7://zpoždění +
-                    game.setDelayPlus();
+                    game.setDelayMinus();
                     break;
                 case F8:// zpoždění -
-                    game.setDelayMinus();
+                    game.setDelayPlus();
                     break;
                 case F9:// zobrazení logu
                     logDialog.showDialog(primaryStage.getOwner());
@@ -99,6 +101,11 @@ public class RoboGameClient extends Application {
                 default:
                     break;
             }
+        });
+        
+        primaryStage.setOnCloseRequest(EventHandler ->{
+            logDialog.closeDialog();
+            System.out.println("1");
         });
 
         root.setAlignment(Pos.CENTER_LEFT);

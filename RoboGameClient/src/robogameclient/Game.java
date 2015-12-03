@@ -78,6 +78,7 @@ public class Game {
     }
     
     public void rePaint(){
+        try{
         Thread thread = new Thread(() -> {
             if(!com.getEndGame()){
                 com.refreshData();
@@ -86,6 +87,9 @@ public class Game {
         }, "ThirdThread");
         thread.setDaemon(true);
         thread.start();
+        }catch (Exception ex){
+            System.err.println("Nepodařilo se vykreslit mapu");
+        }
     }
     
     public void step(){
