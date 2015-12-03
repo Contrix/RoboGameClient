@@ -12,20 +12,44 @@ import javafx.scene.canvas.GraphicsContext;
  * @author Jirka
  */
 public class Game {
-    private final Comunication com = new Comunication();
+    private Comunication com = new Comunication();
     private final Drawing drw = new Drawing();
     private final Wave wave = new Wave();
     private final GraphicsContext gc;
+    private int[] gameInfo = {0,0,0,0};//delay, automaticky další hra, automove
+    private boolean autoNewGame = false;
+    private boolean autoMove = false;
+    private LogDialog logDialog;
     
     public Game(GraphicsContext gc){
         this.gc = gc;
         com.initialise();
-        drw.drawAll(gc, com.getMap(), com.getBotInfo());
+        drw.drawAll(gc, com.getMap(), com.getBotInfo(), gameInfo);
+    }
+    
+    public void newGame(){
+        com.initialise();
+        autoMove = false;
+        drw.drawAll(gc, com.getMap(), com.getBotInfo(), gameInfo);
     }
     
     public void startGame(){
-        while(!com.getEndGame()){
-            nextStep();
+        autoMove = !autoMove;
+        if (autoMove){
+            gameInfo[2] = 1;
+        }
+        else{
+            gameInfo[2] = 0;
+        }
+        
+        if(autoMove){
+            while(!com.getEndGame()){
+                nextStep();
+                delay();
+                if(!autoMove){
+                    break;
+                }
+            }
         }
     }
     
@@ -47,13 +71,17 @@ public class Game {
                 }
             rePaint();
         }
+        if(com.getEndGame() && autoNewGame){
+            delay(2000);
+            com.initialise();                       
+        }
     }
     
     public void rePaint(){
         Thread thread = new Thread(() -> {
             if(!com.getEndGame()){
                 com.refreshData();
-                drw.drawAll(gc, com.getMap(), com.getBotInfo());
+                drw.drawAll(gc, com.getMap(), com.getBotInfo(), gameInfo);
             }
         }, "ThirdThread");
         thread.setDaemon(true);
@@ -86,11 +114,50 @@ public class Game {
         }
         rePaint();
     }
+    
+    private void delay(){
+        try{
+            Thread.sleep(gameInfo[0]);
+        }
+        catch (Exception ex){
+        }
+    }
+    
+    private void delay(int d){
+        try{
+            Thread.sleep(d);
+        }
+        catch (Exception ex){
+        }
+    }
+    
+    public void setDelayPlus(){
+        gameInfo[0] += 100;
+    }
+    
+    public void setDelayMinus(){
+        gameInfo[0] -= 100;
+        if(gameInfo[0] < 0){
+            gameInfo[0] = 0;
+        }
+    }
+    
+    public int getDelay(){
+        return gameInfo[0];
+    }
+    
+    public void setAutoNewGame(){
+        autoNewGame = !autoNewGame;
+        if (autoNewGame){
+            gameInfo[1] = 1;
+        }
+        else{
+            gameInfo[1] = 0;
+        }
+    }
+    
+    public void setLog(LogDialog logDialog){
+        com.setLog(logDialog);
+    }
 }
 
-            /*try{
-                Thread.sleep(1000);
-            }
-            catch (Exception ex){
-                
-            }*/

@@ -24,6 +24,7 @@ import javafx.util.Duration;
  * @author Jirka
  */
 public class RoboGameClient extends Application {
+    private LogDialog logDialog = new LogDialog();
     
     @Override
     public void start(Stage primaryStage){
@@ -32,7 +33,7 @@ public class RoboGameClient extends Application {
         Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         final Game game = new Game(gc);
-        
+        game.setLog(logDialog);
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
             canvas.setWidth(scene.getWidth());
             canvas.setHeight(scene.getHeight());
@@ -45,12 +46,12 @@ public class RoboGameClient extends Application {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
                 case N:
-                    game.nextStep();
+                    game.nextStep();                    
                     break;
                     
                 case S:
-                    Thread mojeVlakno = new Thread(() -> {
-                        game.startGame();
+                    Thread mojeVlakno = new Thread(() -> {                        
+                        game.startGame();                        
                     }, "SecondThread");
                     mojeVlakno.setDaemon(true);
                     mojeVlakno.start();
@@ -70,6 +71,29 @@ public class RoboGameClient extends Application {
                     
                 case RIGHT:
                     game.turnRight();
+                    break;
+                
+                case F5://autohra
+                    Thread mojeVlakno2 = new Thread(() -> {
+                        game.startGame();
+                    }, "SecondThread");
+                    mojeVlakno2.setDaemon(true);
+                    mojeVlakno2.start();
+                    break;
+                case F6://automatické zapínání dalších her
+                    game.setAutoNewGame();
+                    break;
+                case F7://zpoždění +
+                    game.setDelayPlus();
+                    break;
+                case F8:// zpoždění -
+                    game.setDelayMinus();
+                    break;
+                case F9:// zobrazení logu
+                    logDialog.showDialog(primaryStage.getOwner());
+                    break;
+                case F10:// nová hra
+                    game.newGame();
                     break;
                     
                 default:

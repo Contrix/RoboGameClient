@@ -22,14 +22,14 @@ public class Drawing {
     private int moveX;
     private int moveY;
 
-    public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo){
+    public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo, int[] gameInfo){
         checkPixel(gc, array[0].length, array.length);
 
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
 
         drawArray(gc, array, botInfo);
-        drawInfo(gc);
+        drawInfo(gc, gameInfo);
     }
     
     private void checkPixel(GraphicsContext gc, int x, int y){
@@ -94,7 +94,7 @@ public class Drawing {
         }
     }
     
-    private void drawInfo(GraphicsContext gc){
+    private void drawInfo(GraphicsContext gc, int[] gameInfo){
         gc.setFill(Color.BLACK);
         gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel*3));
         gc.setTextAlign(TextAlignment.CENTER);
@@ -105,5 +105,10 @@ public class Drawing {
         gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.LEFT);
         gc.fillText(String.format("v 0.5.02"), pixel/4, height - pixel/4);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText(String.format(
+                String.valueOf(gameInfo[0]) + " - " + 
+                String.valueOf(gameInfo[1]) +
+                String.valueOf(gameInfo[2])), width/2, height - pixel/4);
     }
 }

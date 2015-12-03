@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import javafx.application.Platform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,11 +27,13 @@ public class Comunication {
     private int postRequest = 0;
     private int map[][];
     private JSONObject obj;
-    private boolean endGame = false;
+    private boolean endGame;
+    private LogDialog logDialog;
     
     /*****GET*****/
 
     public void initialise(){
+        endGame = false;
         String jsonData = "";
         String inputLine;
         try{
@@ -144,6 +147,13 @@ public class Comunication {
                 }
                 obj = new JSONObject(jsonData);
                 postRequest ++;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        logDialog.addMsg(String.format("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));
+                    }
+                });
+                
                 System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
                 if(obj.getString("state").equals("game_won")){
                     endGame = true;
@@ -160,5 +170,9 @@ public class Comunication {
     
     public boolean getEndGame(){
         return endGame;
+    }
+    
+    public void setLog(LogDialog logDialog){
+        this.logDialog = logDialog;
     }
 }
