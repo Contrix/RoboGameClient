@@ -34,6 +34,9 @@ public class Comunication {
 
     public void initialise(){
         endGame = false;
+        postRequest = 0;
+        writeToLog("Creating new game");
+        
         String jsonData = "";
         String inputLine;
         try{
@@ -147,13 +150,7 @@ public class Comunication {
                 }
                 obj = new JSONObject(jsonData);
                 postRequest ++;
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logDialog.addMsg(String.format("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));
-                    }
-                });
-                
+                writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));                
                 System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
                 if(obj.getString("state").equals("game_won")){
                     endGame = true;
@@ -174,5 +171,11 @@ public class Comunication {
     
     public void setLog(LogDialog logDialog){
         this.logDialog = logDialog;
+    }
+    
+    private void writeToLog(String s){
+        Platform.runLater(() -> {
+            logDialog.addMsg(s);
+        });
     }
 }

@@ -85,17 +85,21 @@ public class RoboGameClient extends Application {
                 case F6://automatické zapínání dalších her
                     game.setAutoNewGame();
                     break;
-                case F7://zpoždění +
+                case F7:// nová hra
+                    game.newGame();
+                    break;
+                case F8:// zobrazení logu
+                    try{
+                        logDialog.showDialog(primaryStage.getOwner());
+                    }catch(Exception ex){
+                        System.err.println("Nelze zobrazit více logů!");
+                    }
+                    break;
+                case F9://zpoždění -
                     game.setDelayMinus();
                     break;
-                case F8:// zpoždění -
+                case F10:// zpoždění +
                     game.setDelayPlus();
-                    break;
-                case F9:// zobrazení logu
-                    logDialog.showDialog(primaryStage.getOwner());
-                    break;
-                case F10:// nová hra
-                    game.newGame();
                     break;
                     
                 default:
@@ -105,7 +109,6 @@ public class RoboGameClient extends Application {
         
         primaryStage.setOnCloseRequest(EventHandler ->{
             logDialog.closeDialog();
-            System.out.println("1");
         });
 
         root.setAlignment(Pos.CENTER_LEFT);

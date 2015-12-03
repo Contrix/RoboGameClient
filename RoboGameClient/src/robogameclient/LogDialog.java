@@ -24,10 +24,11 @@ public class LogDialog {
     public Stage showDialog(Window parent) {
         dialog = new Stage();
         dialog.initOwner(parent);
-        dialog.initStyle(StageStyle.UTILITY);
+        dialog.initStyle(StageStyle.DECORATED);
         dialog.setTitle("Log");
         dialog.setWidth(350);
         dialog.setHeight(650);
+        dialog.setResizable(false);
         
         listView.setItems(log);
 
@@ -46,7 +47,10 @@ public class LogDialog {
     }
     
     public void closeDialog(){
-        dialog.close();
-        System.out.println("2");
+        try{
+            dialog.close();
+        }catch (Exception ex){
+
+        }
     }
 }
