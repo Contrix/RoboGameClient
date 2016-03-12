@@ -9,14 +9,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import static javafx.scene.input.KeyCode.ESCAPE;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -25,19 +24,22 @@ import javafx.util.Duration;
  * @author Jirka
  */
 public class RoboGameClient extends Application {
-    private LogDialog logDialog = new LogDialog();
+    private final MenuBarComponent menuBarComponent = new MenuBarComponent();
     
     @Override
     public void start(Stage primaryStage){
-        StackPane root = new StackPane();
+        VBox root = new VBox();
+        
         Scene scene = new Scene(root, 800, 800);
-        Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
+        Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight()-25);
         final GraphicsContext gc = canvas.getGraphicsContext2D();
-        final Game game = new Game(gc);
-        game.setLog(logDialog);
+        final Game game = new Game(gc, primaryStage);
+        
+        game.showServerNameDialog(primaryStage);
+        
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
             canvas.setWidth(scene.getWidth());
-            canvas.setHeight(scene.getHeight());
+            canvas.setHeight(scene.getHeight()-25);
             game.rePaint();
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
@@ -46,10 +48,6 @@ public class RoboGameClient extends Application {
         
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
-                case N:
-                    game.nextStep();                    
-                    break;
-                    
                 case S:
                     Thread mojeVlakno = new Thread(() -> {                        
                         game.startGame();                        
@@ -59,21 +57,10 @@ public class RoboGameClient extends Application {
                     break;
                     
                 case ESCAPE:
-                    logDialog.closeDialog();
+                    game.closeLog();
                     primaryStage.close();
                     break;
                     
-                case UP:
-                    game.step();
-                    break;
-                    
-                case LEFT:
-                    game.turnLeft();
-                    break;
-                    
-                case RIGHT:
-                    game.turnRight();
-                    break;
                 
                 case F5://autohra
                     Thread mojeVlakno2 = new Thread(() -> {
@@ -82,25 +69,6 @@ public class RoboGameClient extends Application {
                     mojeVlakno2.setDaemon(true);
                     mojeVlakno2.start();
                     break;
-                case F6://automatické zapínání dalších her
-                    game.setAutoNewGame();
-                    break;
-                case F7:// nová hra
-                    game.newGame();
-                    break;
-                case F8:// zobrazení logu
-                    try{
-                        logDialog.showDialog(primaryStage.getOwner());
-                    }catch(Exception ex){
-                        System.err.println("Nelze zobrazit více logů!");
-                    }
-                    break;
-                case F9://zpoždění -
-                    game.setDelayMinus();
-                    break;
-                case F10:// zpoždění +
-                    game.setDelayPlus();
-                    break;
                     
                 default:
                     break;
@@ -108,11 +76,11 @@ public class RoboGameClient extends Application {
         });
         
         primaryStage.setOnCloseRequest(EventHandler ->{
-            logDialog.closeDialog();
+            game.closeLog();
         });
 
         root.setAlignment(Pos.CENTER_LEFT);
-        root.getChildren().add(canvas);
+        root.getChildren().addAll(menuBarComponent.getMenuBar(game), canvas);
         primaryStage.setTitle("RoboGame");
         primaryStage.setScene(scene);
         primaryStage.show();

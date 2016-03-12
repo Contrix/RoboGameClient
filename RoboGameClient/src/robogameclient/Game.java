@@ -7,6 +7,8 @@ package robogameclient;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Dialog;
+import javafx.stage.Stage;
 
 /**
  *
@@ -20,17 +22,27 @@ public class Game {
     private int[] gameInfo = {0,0,0,0};//delay, automaticky další hra, automove
     private boolean autoNewGame = false;
     private boolean autoMove = false;
-    private LogDialog logDialog;
+    private boolean activGame = false;    
+    private Stage primaryStage;    
+    private LogDialog logDialog = new LogDialog();
+    private ServerNameDialog serverNameDialog = new ServerNameDialog();
     
-    public Game(GraphicsContext gc){
+    public Game(GraphicsContext gc, Stage primaryStage){
         this.gc = gc;
-        newGame();
+        this.primaryStage = primaryStage;
+        com.setLog(logDialog);
+        drw.drawWindow(gc, gameInfo);
+        //newGame();
+    }
+    
+    public Stage getStage(){
+        return primaryStage;
     }
     
     public final void newGame(){
         com.initialise();
         autoMove = false;
-        drw.drawAll(gc, com.getMap(), com.getBotInfo(), gameInfo);
+        drw.drawGame(gc, com.getMap(), com.getBotInfo(), gameInfo);
     }
     
     public void startGame(){
@@ -78,26 +90,30 @@ public class Game {
     }
     
     public void rePaint(){
-        try{
-            Thread thread = new Thread(() -> {
-                
-                if(!com.getEndGame()){
-                    com.refreshData();
-                    Platform.runLater(() -> {
-                        try{
-                            drw.drawAll(gc, com.getMap(), com.getBotInfo(), gameInfo);
-                        }catch(Exception ex){
-                            System.err.println("Nepodařilo se vykreslit mapu");
-                        }
-                    });                        
-                }
-                
-            }, "ThirdThread");
-            thread.setDaemon(true);
-            thread.start();
-        }catch (Exception ex){
-            System.err.println("Nepodařilo se překreslení");
+        if (activGame){
+            try{
+                Thread thread = new Thread(() -> {
+
+                    if(!com.getEndGame()){
+                        com.refreshData();
+                        Platform.runLater(() -> {
+                            try{
+                                drw.drawGame(gc, com.getMap(), com.getBotInfo(), gameInfo);
+                            }catch(Exception ex){
+                                System.err.println("Nepodařilo se vykreslit mapu");
+                            }
+                        });                        
+                    }
+
+                }, "ThirdThread");
+                thread.setDaemon(true);
+                thread.start();
+            }catch (Exception ex){
+                System.err.println("Nepodařilo se překreslení");
+            }  
         }
+        else
+            drw.drawWindow(gc, gameInfo);
     }
     
     public void step(){
@@ -168,8 +184,26 @@ public class Game {
         }
     }
     
-    public void setLog(LogDialog logDialog){
-        com.setLog(logDialog);
+    public LogDialog getLog(){
+        return logDialog;
+    }
+    
+    public void closeLog(){
+        logDialog.closeDialog();
+    }
+    
+    public boolean isActiveGame (){
+        return activGame;
+    }
+    
+    public void setServerName(String name){
+        com.setServerName(name);
+    }
+    
+    public void showServerNameDialog(Stage primaryStage){
+        serverNameDialog.showDialog(primaryStage);
+        //připojit k serveru
+        System.out.println(serverNameDialog.getValue());        
     }
 }
 

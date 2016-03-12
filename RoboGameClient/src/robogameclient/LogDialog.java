@@ -50,7 +50,7 @@ public class LogDialog {
         try{
             dialog.close();
         }catch (Exception ex){
-
+            System.out.println("Log nelze zavřít, nebyl otevřen.");
         }
     }
 }

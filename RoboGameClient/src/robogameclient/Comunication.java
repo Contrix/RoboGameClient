@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * @author Jirka
  */
 public class Comunication {
-    private final String server = "http://hroch.spseol.cz:44822/";
+    private String server = "http://hroch.spseol.cz:44822/";
     //private final String server = "http://localhost:44822/";
     private String id;
     private int postRequest = 0;
@@ -177,5 +177,9 @@ public class Comunication {
         Platform.runLater(() -> {
             logDialog.addMsg(s);
         });
+    }
+    
+    public void setServerName(String name){
+        server = name;
     }
 }

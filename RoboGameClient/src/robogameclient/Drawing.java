@@ -16,23 +16,46 @@ import javafx.scene.text.TextAlignment;
  * @author Jirka
  */
 public class Drawing {
-    private int pixel;
-    private double width;
-    private double height;
-    private int moveX;
-    private int moveY;
+    private int pixel = 20;
+    private double width = 800;
+    private double height = 800;
+    private int moveX = 0;
+    private int moveY = 0;
 
-    public void drawAll(GraphicsContext gc, int[][] array, int[] botInfo, int[] gameInfo){
-        checkPixel(gc, array[0].length, array.length);
-
+    public void drawWindow(GraphicsContext gc, int[] gameInfo){
+        checkPixel(gc);
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
-
-        drawArray(gc, array, botInfo);
-        drawInfo(gc, gameInfo);
+        
+        drawInfo(gc, gameInfo);        
     }
     
-    private void checkPixel(GraphicsContext gc, int x, int y){
+    
+    public void drawGame(GraphicsContext gc, int[][] array, int[] botInfo, int[] gameInfo){
+        drawWindow(gc, botInfo);
+        checkPixelllll(gc, array[0].length, array.length);
+        
+        drawArray(gc, array, botInfo);        
+    }
+    
+    
+    
+    private void checkPixel(GraphicsContext gc){
+        width = gc.getCanvas().getWidth();
+        height = gc.getCanvas().getHeight();
+        
+        while (pixel * 15 >= width){
+            pixel--;
+        }
+        while (pixel * 15 >= height){
+            pixel--;
+        }
+        while (pixel * 15 < width && pixel * 15  < height){
+            pixel++;
+        }
+    }
+    
+    private void checkPixelllll(GraphicsContext gc, int x, int y){
         width = gc.getCanvas().getWidth();
         height = gc.getCanvas().getHeight();
         
@@ -96,9 +119,9 @@ public class Drawing {
     
     private void drawInfo(GraphicsContext gc, int[] gameInfo){
         gc.setFill(Color.BLACK);
-        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel*3));
+        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("PyBots", width/2, moveY/5*4);
+        gc.fillText("PyBots", width/2, pixel);
         
         gc.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         gc.setTextAlign(TextAlignment.RIGHT);
