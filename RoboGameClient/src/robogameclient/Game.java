@@ -7,7 +7,6 @@ package robogameclient;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 /**
@@ -15,17 +14,18 @@ import javafx.stage.Stage;
  * @author Jirka
  */
 public class Game {
-    private Comunication com = new Comunication();
-    private Drawing drw = new Drawing();
+    private final Comunication com = new Comunication();
+    private final Drawing drw = new Drawing();
     private final Wave wave = new Wave();
     private final GraphicsContext gc;
-    private int[] gameInfo = {0,0,0,0};//delay, automaticky další hra, automove
+    private int[] gameInfo = {0};//delay, 
+    private boolean[] settingsOfGame = {true, false}; //tahová hra, laserová hra
     private boolean autoNewGame = false;
     private boolean autoMove = false;
     private boolean activGame = false;    
-    private Stage primaryStage;    
-    private LogDialog logDialog = new LogDialog();
-    private ServerNameDialog serverNameDialog = new ServerNameDialog();
+    private final Stage primaryStage;    
+    private final LogDialog logDialog = new LogDialog();
+    private final ServerNameDialog serverNameDialog = new ServerNameDialog();
     
     public Game(GraphicsContext gc, Stage primaryStage){
         this.gc = gc;
@@ -45,15 +45,8 @@ public class Game {
         drw.drawGame(gc, com.getMap(), com.getBotInfo(), gameInfo);
     }
     
-    public void startGame(){
+    public void startGame(){//předělat..
         autoMove = !autoMove;
-        if (autoMove){
-            gameInfo[1] = 1;
-        }
-        else{
-            gameInfo[1] = 0;
-        }
-        
         if(autoMove){
             while(!com.getEndGame()){
                 nextStep();
@@ -119,7 +112,7 @@ public class Game {
     public void step(){
         if(!com.getEndGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionStep();
         }
         rePaint();
@@ -128,7 +121,7 @@ public class Game {
     public void turnLeft(){
         if(!com.getEndGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionTurnLeft();
         }
         rePaint();
@@ -137,11 +130,17 @@ public class Game {
     public void turnRight(){
         if(!com.getEndGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);
+            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionTurnRight();
         }
         rePaint();
     }
+
+    public void setAutoNewGame(){
+        autoNewGame = !autoNewGame;
+    }
+    
+    /**** Delay ****/
     
     private void delay(){
         try{
@@ -174,15 +173,7 @@ public class Game {
         return gameInfo[0];
     }
     
-    public void setAutoNewGame(){
-        autoNewGame = !autoNewGame;
-        if (autoNewGame){
-            gameInfo[2] = 1;
-        }
-        else{
-            gameInfo[2] = 0;
-        }
-    }
+    /**** LogDialog ****/
     
     public LogDialog getLog(){
         return logDialog;
@@ -192,18 +183,20 @@ public class Game {
         logDialog.closeDialog();
     }
     
+    /****  ****/
+    
     public boolean isActiveGame (){
         return activGame;
     }
     
-    public void setServerName(String name){
-        com.setServerName(name);
+    public void showServerNameDialog(){
+        serverNameDialog.showDialog(primaryStage);
+        System.out.println(serverNameDialog.getValue());    
+        com.setServerName(serverNameDialog.getValue());
     }
     
-    public void showServerNameDialog(Stage primaryStage){
-        serverNameDialog.showDialog(primaryStage);
-        //připojit k serveru
-        System.out.println(serverNameDialog.getValue());        
+    public boolean[] getSettingsOfGame(){
+        return settingsOfGame;
     }
 }
 

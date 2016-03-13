@@ -32,7 +32,7 @@ public class Comunication {
     
     /*****GET*****/
 
-    public void initialise(){
+    public void initialise(){//přesunout id a další metody do try
         endGame = false;
         postRequest = 0;
         writeToLog("Creating new game");
@@ -181,5 +181,6 @@ public class Comunication {
     
     public void setServerName(String name){
         server = name;
+        //initialise();
     }
 }

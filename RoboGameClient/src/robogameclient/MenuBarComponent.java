@@ -18,76 +18,11 @@ import javafx.scene.input.KeyCombination;
  */
 public class MenuBarComponent {
     private final MenuBar menuBar = new MenuBar();
+    private final AboutAppDialog aboutAppDialog = new AboutAppDialog();
+    private final UpdateDialog updateDialog = new UpdateDialog();
     
     public MenuBar getMenuBar(Game game){
-        
-        /*****menu Server*****/
-        Menu menuServer = new Menu("Server");
-        
-        /**item servername**/
-        MenuItem serverName = new MenuItem("Připojit k serveru");
-        serverName.setOnAction((ActionEvent t) -> {
-            game.showServerNameDialog(game.getStage());
-        });        
-        
-        menuServer.getItems().addAll(serverName);
-        
-        /*****menu Settings*****/
-        Menu menuSettings = new Menu("Nastavení");
-        
-        /**item autogame**/
-        CheckMenuItem autoGame = new CheckMenuItem("Zapnout PyBota");
-        autoGame.setAccelerator(KeyCombination.keyCombination("F5"));
-        autoGame.selectedProperty().addListener(listener -> {
-            System.out.println("autoGame - F5");
-        });
-        
-        /**item autostart**/
-        CheckMenuItem autostart = new CheckMenuItem("Po dokončení začít novou hru");
-        autostart.setAccelerator(KeyCombination.keyCombination("F6"));
-        autostart.selectedProperty().addListener(listener -> {
-            System.out.println("autoStart - F6");
-            game.setAutoNewGame();
-        });
-        
-        /**item newGame**/
-        MenuItem newGame = new MenuItem("Nová hra");
-        newGame.setAccelerator(KeyCombination.keyCombination("F7"));
-        newGame.setOnAction((Action) -> {
-            System.out.println("newGame - F7");
-            game.newGame();
-        });
-        
-        /**item showLog**/
-        MenuItem showLog = new MenuItem("Zobrazit log");
-        showLog.setAccelerator(KeyCombination.keyCombination("F8"));
-        showLog.setOnAction((Action) -> {
-            System.out.println("showLog - F8");
-            try{
-                game.getLog().showDialog(game.getStage().getOwner());
-            }catch(Exception ex){
-                System.err.println("Nelze zobrazit více logů!");
-            }
-        });
-        
-        /**item delayPlus**/
-        MenuItem delayPlus = new MenuItem("Zvětšit prodlevu mezi tahy");
-        delayPlus.setAccelerator(KeyCombination.keyCombination("F9"));
-        delayPlus.setOnAction((ActionEvent) -> {
-            System.out.println("delay+ - F7");
-            game.setDelayPlus();
-        });
-        
-        /**item delayMinus**/
-        MenuItem delayMinus = new MenuItem("Snížit prodlevu mezi tahy");
-        delayMinus.setAccelerator(KeyCombination.keyCombination("F10"));
-        delayMinus.setOnAction((ActionEvent) -> {
-            System.out.println("delay- - F8");
-            game.setDelayMinus();
-        });
-
-        menuSettings.getItems().addAll(autoGame, autostart, newGame, showLog, delayPlus, delayMinus);
-        
+              
         /*****menu control*****/
         Menu menuControl = new Menu("Ovládání");
         
@@ -137,16 +72,133 @@ public class MenuBarComponent {
             System.out.println("wait - S");
         });
         
+        if(game.getSettingsOfGame()[1]){
+            laser.setDisable(false);
+            wait.setDisable(false);
+        }
+        else{
+            laser.setDisable(true);
+            wait.setDisable(true);
+        }
+        
         menuControl.getItems().addAll(nextStep, move, turnLeft, turnRight, laser, wait);
+        
+        /*****menu Server*****/
+        Menu menuServer = new Menu("Server");
+        
+        /**item servername**/
+        MenuItem serverName = new MenuItem("Připojit k serveru");
+        serverName.setOnAction((ActionEvent t) -> {
+            game.showServerNameDialog();
+            if(game.getSettingsOfGame()[1]){
+                laser.setDisable(false);
+                wait.setDisable(false);
+            }
+            else{
+                laser.setDisable(true);
+                wait.setDisable(true);
+            }
+        });        
+        
+        menuServer.getItems().addAll(serverName);
         
         /*****menu help*****/
         Menu menuHelp = new Menu("Nápověda");
         
         /**item aboutApp**/
         MenuItem aboutApp = new MenuItem("O aplikaci");
+        aboutApp.setOnAction((Action) -> {
+            aboutAppDialog.showDialog(game.getStage());
+        });
         
-        menuHelp.getItems().addAll(aboutApp);
- 
+        /**item update**/
+        MenuItem update = new MenuItem("Zkontrolovat aktualizace");
+        update.setOnAction((Action) -> {
+            updateDialog.showDialog(game.getStage());
+        });
+        
+        menuHelp.getItems().addAll(aboutApp, update);
+                
+        /*****menu Settings*****/
+        Menu menuSettings = new Menu("Nastavení");
+        
+        /**item delayPlus**/
+        MenuItem delayPlus = new MenuItem("Zvětšit prodlevu mezi tahy");
+        delayPlus.setAccelerator(KeyCombination.keyCombination("F9"));
+        delayPlus.setDisable(true);
+        delayPlus.setOnAction((ActionEvent) -> {
+            System.out.println("delay+ - F7");
+            game.setDelayPlus();
+        });
+        
+        /**item delayMinus**/
+        MenuItem delayMinus = new MenuItem("Snížit prodlevu mezi tahy");
+        delayMinus.setAccelerator(KeyCombination.keyCombination("F10"));
+        delayMinus.setDisable(true);
+        delayMinus.setOnAction((ActionEvent) -> {
+            System.out.println("delay- - F8");
+            game.setDelayMinus();
+        });
+        
+        /**item autogame**/
+        CheckMenuItem autoGame = new CheckMenuItem("Zapnout PyBota");
+        autoGame.setAccelerator(KeyCombination.keyCombination("F5"));
+        autoGame.selectedProperty().addListener(listener -> {
+            System.out.println("autoGame - F5");
+            if (autoGame.isSelected()){
+                nextStep.setDisable(true);
+                move.setDisable(true);
+                turnLeft.setDisable(true);
+                turnRight.setDisable(true);
+                laser.setDisable(true);
+                wait.setDisable(true);
+                
+                delayPlus.setDisable(false);
+                delayMinus.setDisable(false);
+            }
+            else{
+                nextStep.setDisable(false);
+                move.setDisable(false);
+                turnLeft.setDisable(false);
+                turnRight.setDisable(false);
+                laser.setDisable(false);
+                wait.setDisable(false);
+                
+                delayPlus.setDisable(true);
+                delayMinus.setDisable(true);
+            }
+        });
+        
+        /**item autostart**/
+        CheckMenuItem autostart = new CheckMenuItem("Po dokončení začít novou hru");
+        autostart.setAccelerator(KeyCombination.keyCombination("F6"));
+        autostart.selectedProperty().addListener(listener -> {
+            System.out.println("autoStart - F6");
+            game.setAutoNewGame();
+        });
+        
+        /**item newGame**/
+        MenuItem newGame = new MenuItem("Nová hra");
+        newGame.setAccelerator(KeyCombination.keyCombination("F7"));
+        newGame.setOnAction((Action) -> {
+            System.out.println("newGame - F7");
+            game.newGame();
+        });
+        
+        /**item showLog**/
+        MenuItem showLog = new MenuItem("Zobrazit log");
+        showLog.setAccelerator(KeyCombination.keyCombination("F8"));
+        showLog.setOnAction((Action) -> {
+            System.out.println("showLog - F8");
+            try{
+                game.getLog().showDialog(game.getStage().getOwner());
+            }catch(Exception ex){
+                System.err.println("Nelze zobrazit více logů!");
+            }
+        });
+
+        menuSettings.getItems().addAll(autoGame, autostart, newGame, showLog, delayPlus, delayMinus);        
+        
         menuBar.getMenus().addAll(menuServer, menuControl, menuSettings, menuHelp);        
         return menuBar;
     }

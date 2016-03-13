@@ -21,6 +21,7 @@ public class LogDialog {
     private ObservableList<String> log = FXCollections.observableArrayList();
     private ListView listView = new ListView();
     private Stage dialog;
+    
     public Stage showDialog(Window parent) {
         dialog = new Stage();
         dialog.initOwner(parent);

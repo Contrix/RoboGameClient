@@ -37,7 +37,7 @@ public class ServerNameDialog {
         VBox root = new VBox();
         HBox hBox = new HBox();
         Button button = new Button();
-        Label label = new Label("Zadejte adresu serveru");
+        Label label = new Label("Zadejte adresu serveru: ");
         TextField textField = new TextField();
         
         root.getChildren().addAll(hBox, button);
@@ -54,7 +54,6 @@ public class ServerNameDialog {
                 textField.setStyle("-fx-background-color: salmon");
             }
             else {
-                System.out.println("Button Action");
                 serverName = textField.getText();
                 dialog.close();
             }

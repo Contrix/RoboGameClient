@@ -31,20 +31,19 @@ public class RoboGameClient extends Application {
         VBox root = new VBox();
         
         Scene scene = new Scene(root, 800, 800);
-        Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight()-25);
+        Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight()-25);//25 - height of menuBar
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         final Game game = new Game(gc, primaryStage);
         
-        game.showServerNameDialog(primaryStage);
+        game.showServerNameDialog();
         
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
             canvas.setWidth(scene.getWidth());
-            canvas.setHeight(scene.getHeight()-25);
+            canvas.setHeight(scene.getHeight()-25);//25 - height of menuBar
             game.rePaint();
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
-        
         
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
@@ -57,11 +56,9 @@ public class RoboGameClient extends Application {
                     break;
                     
                 case ESCAPE:
-                    game.closeLog();
                     primaryStage.close();
                     break;
-                    
-                
+
                 case F5://autohra
                     Thread mojeVlakno2 = new Thread(() -> {
                         game.startGame();
@@ -81,6 +78,7 @@ public class RoboGameClient extends Application {
 
         root.setAlignment(Pos.CENTER_LEFT);
         root.getChildren().addAll(menuBarComponent.getMenuBar(game), canvas);
+        
         primaryStage.setTitle("RoboGame");
         primaryStage.setScene(scene);
         primaryStage.show();

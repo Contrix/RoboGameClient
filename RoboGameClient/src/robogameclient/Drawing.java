@@ -32,7 +32,7 @@ public class Drawing {
     
     
     public void drawGame(GraphicsContext gc, int[][] array, int[] botInfo, int[] gameInfo){
-        drawWindow(gc, botInfo);
+        drawWindow(gc, gameInfo);
         checkPixelllll(gc, array[0].length, array.length);
         
         drawArray(gc, array, botInfo);        
@@ -130,8 +130,6 @@ public class Drawing {
         gc.fillText(String.format("v 0.6"), pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText(String.format(
-                String.valueOf(gameInfo[0]) + " - " + 
-                String.valueOf(gameInfo[1]) +
-                String.valueOf(gameInfo[2])), width/2, height - pixel/4);
+                String.valueOf(gameInfo[0])), width/2, height - pixel/4);
     }
 }
