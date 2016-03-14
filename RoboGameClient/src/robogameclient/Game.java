@@ -19,7 +19,7 @@ public class Game {
     private final Wave wave = new Wave();
     private final GraphicsContext gc;
     private int[] gameInfo = {0};//delay, 
-    private boolean[] settingsOfGame = {true, false}; //tahová hra, laserová hra
+    private boolean[] settingsOfGame = {true, true, true}; //tahová hra, batttery game, laserová hra
     private boolean autoNewGame = false;
     private boolean autoMove = false;
     private boolean activGame = false;    
@@ -48,7 +48,7 @@ public class Game {
     public void startGame(){//předělat..
         autoMove = !autoMove;
         if(autoMove){
-            while(!com.getEndGame()){
+            while(!com.isActiveGame()){
                 nextStep();
                 delay();
                 if(!autoMove){
@@ -59,7 +59,7 @@ public class Game {
     }
     
     public void nextStep(){
-        if(!com.getEndGame()){
+        if(!com.isActiveGame()){
             com.refreshData();
             switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
                 case "step":
@@ -76,18 +76,18 @@ public class Game {
                 }
             rePaint();
         }
-        if(com.getEndGame() && autoNewGame){
+        if(com.isActiveGame() && autoNewGame){
             delay(2000);
             com.initialise();
         }
     }
     
     public void rePaint(){
-        if (activGame){
+        //if (activGame){
             try{
                 Thread thread = new Thread(() -> {
 
-                    if(!com.getEndGame()){
+                    if(!com.isActiveGame()){
                         com.refreshData();
                         Platform.runLater(() -> {
                             try{
@@ -104,13 +104,13 @@ public class Game {
             }catch (Exception ex){
                 System.err.println("Nepodařilo se překreslení");
             }  
-        }
+        /*}
         else
-            drw.drawWindow(gc, gameInfo);
+            drw.drawWindow(gc, gameInfo);*/
     }
     
     public void step(){
-        if(!com.getEndGame()){
+        if(!com.isActiveGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionStep();
@@ -119,7 +119,7 @@ public class Game {
     }
     
     public void turnLeft(){
-        if(!com.getEndGame()){
+        if(!com.isActiveGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionTurnLeft();
@@ -128,7 +128,7 @@ public class Game {
     }
     
     public void turnRight(){
-        if(!com.getEndGame()){
+        if(!com.isActiveGame()){
             com.refreshData();
             wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
             com.ActionTurnRight();

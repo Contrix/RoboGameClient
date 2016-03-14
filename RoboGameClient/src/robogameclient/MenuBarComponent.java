@@ -22,7 +22,19 @@ public class MenuBarComponent {
     private final UpdateDialog updateDialog = new UpdateDialog();
     
     public MenuBar getMenuBar(Game game){
-              
+        
+        /*****menu game*****/
+        Menu menuGame = new Menu("Hra");
+        
+        /**item newGame**/
+        MenuItem newGame = new MenuItem("Nová hra");
+        newGame.setAccelerator(KeyCombination.keyCombination("F7"));
+        newGame.setOnAction((Action) -> {
+            System.out.println("newGame - F7");
+            game.newGame();
+        });
+        menuGame.getItems().add(newGame);
+        
         /*****menu control*****/
         Menu menuControl = new Menu("Ovládání");
         
@@ -73,12 +85,17 @@ public class MenuBarComponent {
         });
         
         if(game.getSettingsOfGame()[1]){
-            laser.setDisable(false);
             wait.setDisable(false);
         }
         else{
-            laser.setDisable(true);
             wait.setDisable(true);
+        }
+        
+        if(game.getSettingsOfGame()[2]){
+            laser.setDisable(false);
+        }
+        else{
+            laser.setDisable(true);
         }
         
         menuControl.getItems().addAll(nextStep, move, turnLeft, turnRight, laser, wait);
@@ -91,13 +108,18 @@ public class MenuBarComponent {
         serverName.setOnAction((ActionEvent t) -> {
             game.showServerNameDialog();
             if(game.getSettingsOfGame()[1]){
+            wait.setDisable(false);
+            }
+            else{
+                wait.setDisable(true);
+            }
+
+            if(game.getSettingsOfGame()[2]){
                 laser.setDisable(false);
-                wait.setDisable(false);
             }
             else{
                 laser.setDisable(true);
-                wait.setDisable(true);
-            }
+        }
         });        
         
         menuServer.getItems().addAll(serverName);
@@ -177,14 +199,6 @@ public class MenuBarComponent {
             game.setAutoNewGame();
         });
         
-        /**item newGame**/
-        MenuItem newGame = new MenuItem("Nová hra");
-        newGame.setAccelerator(KeyCombination.keyCombination("F7"));
-        newGame.setOnAction((Action) -> {
-            System.out.println("newGame - F7");
-            game.newGame();
-        });
-        
         /**item showLog**/
         MenuItem showLog = new MenuItem("Zobrazit log");
         showLog.setAccelerator(KeyCombination.keyCombination("F8"));
@@ -197,9 +211,9 @@ public class MenuBarComponent {
             }
         });
 
-        menuSettings.getItems().addAll(autoGame, autostart, newGame, showLog, delayPlus, delayMinus);        
+        menuSettings.getItems().addAll(autoGame, autostart, showLog, delayPlus, delayMinus);        
         
-        menuBar.getMenus().addAll(menuServer, menuControl, menuSettings, menuHelp);        
+        menuBar.getMenus().addAll(menuServer, menuGame, menuControl, menuSettings, menuHelp);        
         return menuBar;
     }
 }

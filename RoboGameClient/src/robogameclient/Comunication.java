@@ -21,19 +21,18 @@ import org.json.JSONObject;
  * @author Jirka
  */
 public class Comunication {
-    private String server = "http://hroch.spseol.cz:44822/";
-    //private final String server = "http://localhost:44822/";
+    private String server;//http://hroch.spseol.cz:44822/
     private String id;
     private int postRequest = 0;
     private int map[][];
     private JSONObject obj;
-    private boolean endGame;
+    private boolean activeGame;
     private LogDialog logDialog;
     
     /*****GET*****/
 
     public void initialise(){//přesunout id a další metody do try
-        endGame = false;
+        activeGame = true;
         postRequest = 0;
         writeToLog("Creating new game");
         
@@ -45,18 +44,20 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
+                //sem
+                //return true;
             } catch (IOException ex) {
                 System.err.println("Nepodařilo se přečíst data - " + ex);
             }
         } catch (Exception ex) {
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
-        
         id = new JSONObject(jsonData).getString("bot_id");
         System.out.println("bot_id: " + id);
-        
+
         refreshData();
         getMap();
+        //return false;        
     }
     
     public void refreshData(){
@@ -70,31 +71,48 @@ public class Comunication {
                 }
                 obj = new JSONObject(jsonData);
             } catch (IOException ex) {
-                endGame = true;
+                activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
                 
             }
         } catch (Exception ex) {
-            endGame = true;
+            activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
     }
-
+    
+    private int[] bot;
     public int[][] getMap(){
-        map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
+        //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
+        map = new int[(int)obj.getJSONArray("map_resolutions").get(1)][(int)obj.getJSONArray("map_resolutions").get(0)];
         
-        JSONArray bot_map = obj.getJSONArray("map");
-        for (int i = 0; i < bot_map.length(); i++){
-            JSONArray a = bot_map.getJSONArray(i);
+        JSONArray botMap = obj.getJSONArray("map");
+        for (int i = 0; i < botMap.length(); i++){
+            JSONArray a = botMap.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
-                map[i][j] = a.getInt(j);
+                try {
+                    map[i][j] = (int)a.getInt(j);
+                }
+                catch(Exception e){//bot
+                    map[i][j] = 2;
+                    try{
+                        if (a.getJSONObject(j).getBoolean("your_bot")){
+                            bot = new int[]{i,j, (int)a.getJSONObject(j).getInt("orientation")};
+                        }
+                    }
+                    catch(Exception ex){
+                        
+                    }
+                }
             }
         }
         return(map);
     }
     
+    
+    
     public int[] getBotInfo(){
-        JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);;
+        /*JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);;
         for (int i = 0; i < obj.getJSONArray("bots").length(); i++){
             if(obj.getJSONArray("bots").getJSONObject(i).getBoolean("your_bot")){
                 myBot = obj.getJSONArray("bots").getJSONObject(i);
@@ -102,7 +120,10 @@ public class Comunication {
             }
         }
         int[] myBotInfo = {myBot.getInt("x"), myBot.getInt("y"), myBot.getInt("orientation")};
-        return (myBotInfo);
+        return (myBotInfo);*/
+        getMap();
+        
+        return bot;
     }
     
     public MyPoint getTreasure(){
@@ -137,7 +158,7 @@ public class Comunication {
             try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
                 out.write("bot_id=" + id + "&action=" + s);
             } catch (IOException ex) {
-                endGame = true;
+                activeGame = false;
                 System.err.println("Nepodařilo se odeslat data - " + ex);
             }
             
@@ -153,20 +174,20 @@ public class Comunication {
                 writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));                
                 System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
                 if(obj.getString("state").equals("game_won")){
-                    endGame = true;
+                    activeGame = false;
                 }
             } catch (IOException ex) {
-                endGame = true;
+                activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
             }
         } catch(IOException ex){
-            endGame = true;
+            activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (POST) - " + ex);
         }
     }
     
-    public boolean getEndGame(){
-        return endGame;
+    public boolean isActiveGame(){
+        return activeGame;
     }
     
     public void setLog(LogDialog logDialog){

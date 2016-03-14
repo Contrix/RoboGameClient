@@ -48,11 +48,11 @@ public class RoboGameClient extends Application {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
                 case S:
-                    Thread mojeVlakno = new Thread(() -> {                        
+                    /*Thread mojeVlakno = new Thread(() -> {                        
                         game.startGame();                        
                     }, "SecondThread");
                     mojeVlakno.setDaemon(true);
-                    mojeVlakno.start();
+                    mojeVlakno.start();*/
                     break;
                     
                 case ESCAPE:
