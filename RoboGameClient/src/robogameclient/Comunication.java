@@ -1,11 +1,14 @@
 package robogameclient;
 
+import Obj.Bot;
+import Obj.Treasure;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import javafx.application.Platform;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,17 +27,23 @@ public class Comunication {
     private String server;//http://hroch.spseol.cz:44822/
     private String id;
     private int postRequest = 0;
+    private boolean activeGame;
+    private Bot myBot; //xy yx, orientace, baterka
+    
+    ArrayList<Bot> bots = new ArrayList<>();
+    ArrayList<Treasure> treasures = new ArrayList<>();
+    
+    
     private int map[][];
     private JSONObject obj;
-    private boolean activeGame;
+    
     private LogDialog logDialog;
     
     /*****GET*****/
 
-    public void initialise(){//přesunout id a další metody do try
-        activeGame = true;
+    public boolean initialise(){//přesunout id a další metody do try
         postRequest = 0;
-        writeToLog("Creating new game");
+        writeToLog("Vytvářím novou hru");
         
         String jsonData = "";
         String inputLine;
@@ -44,25 +53,26 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
-                //sem
-                //return true;
+                id = new JSONObject(jsonData).getString("bot_id");
+                System.out.println("bot_id: " + id);
+                activeGame = true;
+                refreshData();
+                getMap();
+                
+                return true;
             } catch (IOException ex) {
                 System.err.println("Nepodařilo se přečíst data - " + ex);
             }
         } catch (Exception ex) {
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
-        id = new JSONObject(jsonData).getString("bot_id");
-        System.out.println("bot_id: " + id);
-
-        refreshData();
-        getMap();
-        //return false;        
+        activeGame = false;
+        return false;        
     }
     
     public void refreshData(){
         String jsonData = "";
-        String inputLine = "";
+        String inputLine;
         try{
             URLConnection connectionGetMap = new URL(server + "game/" + id).openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
@@ -72,8 +82,7 @@ public class Comunication {
                 obj = new JSONObject(jsonData);
             } catch (IOException ex) {
                 activeGame = false;
-                System.err.println("Nepodařilo se přečíst data - " + ex);
-                
+                System.err.println("Nepodařilo se přečíst data - " + ex);            
             }
         } catch (Exception ex) {
             activeGame = false;
@@ -81,7 +90,6 @@ public class Comunication {
         }
     }
     
-    private int[] bot;
     public int[][] getMap(){
         //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
         map = new int[(int)obj.getJSONArray("map_resolutions").get(1)][(int)obj.getJSONArray("map_resolutions").get(0)];
@@ -90,68 +98,66 @@ public class Comunication {
         for (int i = 0; i < botMap.length(); i++){
             JSONArray a = botMap.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
+                //všechny položky budou objekty..try pak smazat
                 try {
                     map[i][j] = (int)a.getInt(j);
                 }
                 catch(Exception e){//bot
                     map[i][j] = 2;
-                    try{
-                        if (a.getJSONObject(j).getBoolean("your_bot")){
-                            bot = new int[]{i,j, (int)a.getJSONObject(j).getInt("orientation")};
-                        }
+                    if (a.getJSONObject(j).has("your_bot")){
+                        myBot = new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0);
                     }
-                    catch(Exception ex){
-                        
+                    else{
+                        bots.add(new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0));
                     }
                 }
+                
+                //==je poklad
+                //treasures.add(new Treasure(x, y));
+                
             }
         }
         return(map);
+    }    
+    
+    
+    public Bot getMyBot(){
+        getMap();//asi smazat        
+        return myBot;
     }
     
-    
-    
-    public int[] getBotInfo(){
-        /*JSONObject myBot = obj.getJSONArray("bots").getJSONObject(0);;
-        for (int i = 0; i < obj.getJSONArray("bots").length(); i++){
-            if(obj.getJSONArray("bots").getJSONObject(i).getBoolean("your_bot")){
-                myBot = obj.getJSONArray("bots").getJSONObject(i);
-                break;
-            }
-        }
-        int[] myBotInfo = {myBot.getInt("x"), myBot.getInt("y"), myBot.getInt("orientation")};
-        return (myBotInfo);*/
-        getMap();
-        
-        return bot;
+    public ArrayList getBots(){
+        getMap();//asi smazat        
+        return bots;
     }
     
-    public MyPoint getTreasure(){
-        for (int i = 0; i < map.length; i++){
-            for (int j = 0; j < map[0].length; j++){
-                if (map[i][j] == 1){
-                    return (new MyPoint(i, j));
-                }
-            }
-        }
-        return (new MyPoint(1000, 1000));
+    public ArrayList getTreasure(){
+        return treasures;
     }
     
     /*****POST*****/
     
-    public void ActionTurnLeft(){
+    public void actionTurnLeft(){
         post("turn_left");        
     }
     
-    public void ActionTurnRight(){
+    public void actionTurnRight(){
         post("turn_right");
     }
     
-    public void ActionStep(){
+    public void actionStep(){
         post("step");
     }
     
-    private void post(String s){
+    public void actionWait(){//jména
+        post("wait");
+    }
+    
+    public void actionLaser(){//jména
+        post("laser");
+    }
+    
+    private void post(String s){//doladit
         try{
             URLConnection connectionAction = new URL(server + "action").openConnection();
             connectionAction.setDoOutput(true);
@@ -172,13 +178,14 @@ public class Comunication {
                 obj = new JSONObject(jsonData);
                 postRequest ++;
                 writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));                
-                System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
+                //System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
                 if(obj.getString("state").equals("game_won")){
                     activeGame = false;
                 }
             } catch (IOException ex) {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
+                
             }
         } catch(IOException ex){
             activeGame = false;

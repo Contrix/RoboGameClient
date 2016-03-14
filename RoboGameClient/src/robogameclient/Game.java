@@ -42,7 +42,7 @@ public class Game {
     public final void newGame(){
         com.initialise();
         autoMove = false;
-        drw.drawGame(gc, com.getMap(), com.getBotInfo(), gameInfo);
+        drw.drawGame(gc, com.getMap(), com.getMyBot(), gameInfo);
     }
     
     public void startGame(){//předělat..
@@ -61,15 +61,15 @@ public class Game {
     public void nextStep(){
         if(!com.isActiveGame()){
             com.refreshData();
-            switch (wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2])){
+            switch (wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2])){
                 case "step":
-                    com.ActionStep();
+                    com.actionStep();
                     break;
                 case "rotateLeft":
-                    com.ActionTurnLeft();
+                    com.actionTurnLeft();
                     break;
                 case "rotateRight":
-                    com.ActionTurnRight();
+                    com.actionTurnRight();
                     break;
                 default:
                     break;
@@ -91,7 +91,7 @@ public class Game {
                         com.refreshData();
                         Platform.runLater(() -> {
                             try{
-                                drw.drawGame(gc, com.getMap(), com.getBotInfo(), gameInfo);
+                                drw.drawGame(gc, com.getMap(), com.getMyBot(), gameInfo);
                             }catch(Exception ex){
                                 System.err.println("Nepodařilo se vykreslit mapu");
                             }
@@ -112,8 +112,8 @@ public class Game {
     public void step(){
         if(!com.isActiveGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
-            com.ActionStep();
+            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+            com.actionStep();
         }
         rePaint();
     }
@@ -121,8 +121,8 @@ public class Game {
     public void turnLeft(){
         if(!com.isActiveGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
-            com.ActionTurnLeft();
+            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+            com.actionTurnLeft();
         }
         rePaint();
     }
@@ -130,8 +130,8 @@ public class Game {
     public void turnRight(){
         if(!com.isActiveGame()){
             com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getBotInfo()[1], com.getBotInfo()[0]), com.getTreasure(), com.getBotInfo()[2]);//?
-            com.ActionTurnRight();
+            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+            com.actionTurnRight();
         }
         rePaint();
     }
