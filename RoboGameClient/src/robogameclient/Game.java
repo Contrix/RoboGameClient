@@ -18,7 +18,7 @@ public class Game {
     private final Drawing drw = new Drawing();
     private final Wave wave = new Wave();
     private final GraphicsContext gc;
-    private int[] gameInfo = {0};//delay, 
+    private int[] myGameInfo = {0};//delay, 
     private boolean[] settingsOfGame = {true, true, true}; //tahová hra, batttery game, laserová hra
     private boolean autoNewGame = false;
     private boolean autoMove = false;
@@ -31,7 +31,7 @@ public class Game {
         this.gc = gc;
         this.primaryStage = primaryStage;
         com.setLog(logDialog);
-        drw.drawWindow(gc, gameInfo);
+        drw.drawWindow(gc, myGameInfo);
         //newGame();
     }
     
@@ -42,7 +42,7 @@ public class Game {
     public final void newGame(){
         com.initialise();
         autoMove = false;
-        drw.drawGame(gc, com.getMap(), com.getMyBot(), gameInfo);
+        drw.drawGame(gc, com.getMap(), com.getMyBot(), myGameInfo);
     }
     
     public void startGame(){//předělat..
@@ -91,7 +91,7 @@ public class Game {
                         com.refreshData();
                         Platform.runLater(() -> {
                             try{
-                                drw.drawGame(gc, com.getMap(), com.getMyBot(), gameInfo);
+                                drw.drawGame(gc, com.getMap(), com.getMyBot(), myGameInfo);
                             }catch(Exception ex){
                                 System.err.println("Nepodařilo se vykreslit mapu");
                             }
@@ -144,7 +144,7 @@ public class Game {
     
     private void delay(){
         try{
-            Thread.sleep(gameInfo[0]);
+            Thread.sleep(myGameInfo[0]);
         }
         catch (Exception ex){
         }
@@ -159,18 +159,18 @@ public class Game {
     }
     
     public void setDelayPlus(){
-        gameInfo[0] += 100;
+        myGameInfo[0] += 100;
     }
     
     public void setDelayMinus(){
-        gameInfo[0] -= 100;
-        if(gameInfo[0] < 0){
-            gameInfo[0] = 0;
+        myGameInfo[0] -= 100;
+        if(myGameInfo[0] < 0){
+            myGameInfo[0] = 0;
         }
     }
     
     public int getDelay(){
-        return gameInfo[0];
+        return myGameInfo[0];
     }
     
     /**** LogDialog ****/

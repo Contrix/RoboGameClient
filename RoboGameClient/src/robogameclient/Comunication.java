@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /*
@@ -29,6 +30,7 @@ public class Comunication {
     private int postRequest = 0;
     private boolean activeGame;
     private Bot myBot; //xy yx, orientace, baterka
+    private boolean[] gameInfo = new boolean[3];//tahová hra, baterky, lasery
     
     ArrayList<Bot> bots = new ArrayList<>();
     ArrayList<Treasure> treasures = new ArrayList<>();
@@ -40,7 +42,11 @@ public class Comunication {
     private LogDialog logDialog;
     
     /*****GET*****/
-
+    
+    /**
+    * Ze serveru si načte základní data
+    * @return  Připojení bylo úspěšné/neúspěšné
+    */
     public boolean initialise(){//přesunout id a další metody do try
         postRequest = 0;
         writeToLog("Vytvářím novou hru");
@@ -56,20 +62,33 @@ public class Comunication {
                 id = new JSONObject(jsonData).getString("bot_id");
                 System.out.println("bot_id: " + id);
                 activeGame = true;
+                
+                refreshGameInfo();
                 refreshData();
-                getMap();
                 
                 return true;
             } catch (IOException ex) {
                 System.err.println("Nepodařilo se přečíst data - " + ex);
             }
-        } catch (Exception ex) {
+        } catch (IOException | JSONException ex) {
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
         activeGame = false;
         return false;        
     }
     
+    /**
+     * Obnoví informace o hře
+    */
+    private void refreshGameInfo(){
+        gameInfo[0] = obj.getJSONObject("game_info").getBoolean("rounded_game");
+        gameInfo[1] = obj.getJSONObject("game_info").getBoolean("battery_game");
+        gameInfo[2] = obj.getJSONObject("game_info").getBoolean("laser_game");
+    }
+    
+    /**
+     * Obnoví stávající data
+    */
     public void refreshData(){
         String jsonData = "";
         String inputLine;
@@ -84,13 +103,18 @@ public class Comunication {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);            
             }
-        } catch (Exception ex) {
+        } catch (IOException | JSONException ex) {
             activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
+        
+        refreshMap();
     }
     
-    public int[][] getMap(){
+    /**
+    * Obnoví informace o mapě
+    */
+    private void refreshMap(){
         //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
         map = new int[(int)obj.getJSONArray("map_resolutions").get(1)][(int)obj.getJSONArray("map_resolutions").get(0)];
         
@@ -106,6 +130,7 @@ public class Comunication {
                     map[i][j] = 2;
                     if (a.getJSONObject(j).has("your_bot")){
                         myBot = new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0);
+                        bots.add(new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0));
                     }
                     else{
                         bots.add(new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0));
@@ -117,46 +142,86 @@ public class Comunication {
                 
             }
         }
-        return(map);
+    }
+    
+    /**
+    * @return  Nastavení hry
+    */
+    public boolean[] getGameInfo(){
+        return gameInfo;
+    }  
+    
+    /**
+    * @return  Mapa hry
+    */
+    public int[][] getMap(){
+        return map;
     }    
     
-    
+    /**
+    * @return  Bot stávajícího klienta
+    */
     public Bot getMyBot(){
-        getMap();//asi smazat        
+        refreshMap();//asi smazat        
         return myBot;
     }
     
+    /**
+    * @return  Všechyn boty na mapě
+    */
     public ArrayList getBots(){
-        getMap();//asi smazat        
+        refreshMap();//asi smazat        
         return bots;
     }
     
+    /**
+    * @return  Poklady
+    */
     public ArrayList getTreasure(){
         return treasures;
     }
     
     /*****POST*****/
     
+    /**
+     * Vytvoří požadavek pro server pro akci otočit se doleva
+     */
     public void actionTurnLeft(){
         post("turn_left");        
     }
     
+    /**
+     * Vytvoří požadavek pro server pro akci otočit se doprava
+     */
     public void actionTurnRight(){
         post("turn_right");
     }
     
+    /**
+     * Vytvoří požadavek pro server pro akci krok vpřed
+     */
     public void actionStep(){
         post("step");
     }
     
-    public void actionWait(){//jména
+    /**
+     * Vytvoří požadavek pro server pro akci vzdát se tahu
+     */
+    public void actionWait(){
         post("wait");
     }
     
-    public void actionLaser(){//jména
-        post("laser");
+    /**
+     * Vytvoří požadavek pro server pro akci střelba laserem
+     */
+    public void actionLaserBeam(){
+        post("laser_beam");
     }
     
+    /**
+     * Odešle data na server
+     * @param s Data k odeslání
+     */
     private void post(String s){//doladit
         try{
             URLConnection connectionAction = new URL(server + "action").openConnection();
@@ -193,20 +258,36 @@ public class Comunication {
         }
     }
     
+    /**
+     * Vrátí, zda je hra aktivní
+     * @return Aktivní hra
+     */
     public boolean isActiveGame(){
         return activeGame;
     }
     
+    /**
+     * Nastaví log
+     * @param logDialog 
+     */
     public void setLog(LogDialog logDialog){
         this.logDialog = logDialog;
     }
     
-    private void writeToLog(String s){
+    /**
+     * Zapíše do uživatelského logu
+     * @param text Textový zápis
+    */
+    private void writeToLog(String text){
         Platform.runLater(() -> {
-            logDialog.addMsg(s);
+            logDialog.addMsg(text);
         });
     }
     
+    /**
+     * Nastaví asresu server
+     * @param name URI serveru
+    */
     public void setServerName(String name){
         server = name;
         //initialise();
