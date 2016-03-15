@@ -25,6 +25,7 @@ import org.json.JSONObject;
  * @author Jirka
  */
 public class Comunication {
+    private final LogDialog logDialog = new LogDialog();
     private String server;//http://hroch.spseol.cz:44822/
     private String id;
     private int postRequest = 0;
@@ -35,11 +36,8 @@ public class Comunication {
     ArrayList<Bot> bots = new ArrayList<>();
     ArrayList<Treasure> treasures = new ArrayList<>();
     
-    
     private int map[][];
     private JSONObject obj;
-    
-    private LogDialog logDialog;
     
     /*****GET*****/
     
@@ -49,6 +47,9 @@ public class Comunication {
     */
     public boolean initialise(){//přesunout id a další metody do try
         postRequest = 0;
+        bots.clear();
+        treasures.clear();
+        myBot = null;
         writeToLog("Vytvářím novou hru");
         
         String jsonData = "";
@@ -63,16 +64,18 @@ public class Comunication {
                 System.out.println("bot_id: " + id);
                 activeGame = true;
                 
-                refreshGameInfo();
                 refreshData();
-                
+                refreshGameInfo();
+                                
                 return true;
             } catch (IOException ex) {
                 System.err.println("Nepodařilo se přečíst data - " + ex);
+                activeGame = false;
             }
         } catch (IOException | JSONException ex) {
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
+        writeToLog("Nepodařilo se vytvořit novou hru");
         activeGame = false;
         return false;        
     }
@@ -98,7 +101,7 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
-                obj = new JSONObject(jsonData);
+                obj = new JSONObject(jsonData);                
             } catch (IOException ex) {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);            
@@ -107,8 +110,8 @@ public class Comunication {
             activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
-        
-        refreshMap();
+        if (activeGame)
+            refreshMap();
     }
     
     /**
@@ -116,7 +119,7 @@ public class Comunication {
     */
     private void refreshMap(){
         //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
-        map = new int[(int)obj.getJSONObject("map_resolutions").getInt("height")][(int)obj.getJSONObject("map_resolutions").getInt("width")];
+        map = new int[(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("height")][(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("width")];
         
         JSONArray botMap = obj.getJSONArray("map");
         for (int i = 0; i < botMap.length(); i++){
@@ -129,11 +132,11 @@ public class Comunication {
                 catch(Exception e){//bot
                     map[i][j] = 2;
                     if (a.getJSONObject(j).has("your_bot")){
-                        myBot = new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0);
-                        bots.add(new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0));
+                        myBot = new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0);
+                        bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
                     }
                     else{
-                        bots.add(new Bot(i,j, (int)a.getJSONObject(j).getInt("orientation"),0));
+                        bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
                     }
                 }
                 
@@ -161,8 +164,7 @@ public class Comunication {
     /**
     * @return  Bot stávajícího klienta
     */
-    public Bot getMyBot(){
-        refreshMap();//asi smazat        
+    public Bot getMyBot(){    
         return myBot;
     }
     
@@ -170,7 +172,6 @@ public class Comunication {
     * @return  Všechyn boty na mapě
     */
     public ArrayList getBots(){
-        refreshMap();//asi smazat        
         return bots;
     }
     
@@ -267,14 +268,6 @@ public class Comunication {
     }
     
     /**
-     * Nastaví log
-     * @param logDialog 
-     */
-    public void setLog(LogDialog logDialog){
-        this.logDialog = logDialog;
-    }
-    
-    /**
      * Zapíše do uživatelského logu
      * @param text Textový zápis
     */
@@ -282,6 +275,21 @@ public class Comunication {
         Platform.runLater(() -> {
             logDialog.addMsg(text);
         });
+    }
+    
+    /**
+     * Uzavře log
+     */
+    public void closeLog(){
+        logDialog.closeDialog();
+    }
+    
+    /**
+     * Vrátí insatnci logu
+     * @return LogDialog
+     */
+    public LogDialog getLog(){
+        return logDialog;
     }
     
     /**

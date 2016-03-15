@@ -84,14 +84,14 @@ public class MenuBarComponent {
             System.out.println("wait - S");
         });
         
-        if(game.getSettingsOfGame()[1]){
+        if(game.getGameInfo()[1]){
             wait.setDisable(false);
         }
         else{
             wait.setDisable(true);
         }
         
-        if(game.getSettingsOfGame()[2]){
+        if(game.getGameInfo()[2]){
             laser.setDisable(false);
         }
         else{
@@ -107,14 +107,14 @@ public class MenuBarComponent {
         MenuItem serverName = new MenuItem("Připojit k serveru");
         serverName.setOnAction((ActionEvent t) -> {
             game.showServerNameDialog();
-            if(game.getSettingsOfGame()[1]){
+            if(game.getGameInfo()[1]){
             wait.setDisable(false);
             }
             else{
                 wait.setDisable(true);
             }
 
-            if(game.getSettingsOfGame()[2]){
+            if(game.getGameInfo()[2]){
                 laser.setDisable(false);
             }
             else{

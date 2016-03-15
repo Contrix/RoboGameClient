@@ -14,43 +14,58 @@ import javafx.stage.Stage;
  * @author Jirka
  */
 public class Game {
-    private final Comunication com = new Comunication();
+    private final static Comunication com = new Comunication();
     private final Drawing drw = new Drawing();
-    private final Wave wave = new Wave();
+    private final Wave wave = new Wave();     
+    
+    private final ServerNameDialog serverNameDialog = new ServerNameDialog();
     private final GraphicsContext gc;
-    private int[] myGameInfo = {0};//delay, 
-    private boolean[] settingsOfGame = {true, true, true}; //tahová hra, batttery game, laserová hra
+    private final Stage primaryStage;   
+    
+    private int delay = 0;
+    private boolean[] gameInfo = {false, false, false}; //tahová hra, batttery game, laserová hra
+    
     private boolean autoNewGame = false;
     private boolean autoMove = false;
-    private boolean activGame = false;    
-    private final Stage primaryStage;    
-    private final LogDialog logDialog = new LogDialog();
-    private final ServerNameDialog serverNameDialog = new ServerNameDialog();
     
+    /**
+     * Řídící jednotka celé hry
+     * @param gc GraphicsContext
+     * @param primaryStage stage
+     */
     public Game(GraphicsContext gc, Stage primaryStage){
         this.gc = gc;
         this.primaryStage = primaryStage;
-        com.setLog(logDialog);
-        drw.drawWindow(gc, myGameInfo);
         //newGame();
     }
     
+    /**
+     * Vrátí stage
+     * @return stage
+     */
     public Stage getStage(){
         return primaryStage;
     }
     
+    /**
+     * Pokusí se vytvořit novou hru
+     */
     public final void newGame(){
         com.initialise();
-        autoMove = false;
-        drw.drawGame(gc, com.getMap(), com.getMyBot(), myGameInfo);
+        gameInfo = com.getGameInfo();
+        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
     }
     
-    public void startGame(){//předělat..
+    /**
+     * Zapne/vypne automatické chování bota
+     */
+    public void autoBot(){
         autoMove = !autoMove;
         if(autoMove){
             while(!com.isActiveGame()){
                 nextStep();
-                delay();
+                if (delay !=0)
+                    delay();
                 if(!autoMove){
                     break;
                 }
@@ -58,10 +73,13 @@ public class Game {
         }
     }
     
-    public void nextStep(){
-        if(!com.isActiveGame()){
+    /**
+     * Jeden krok algoritmu
+     */
+    public void nextStep(){//předělat
+        if(com.isActiveGame()){
             com.refreshData();
-            switch (wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2])){
+            /*switch (wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2])){
                 case "step":
                     com.actionStep();
                     break;
@@ -73,64 +91,46 @@ public class Game {
                     break;
                 default:
                     break;
-                }
+                }*/
             rePaint();
         }
-        if(com.isActiveGame() && autoNewGame){
+        if(autoNewGame){
             delay(2000);
-            com.initialise();
+            newGame();
         }
     }
     
     public void rePaint(){
-        //if (activGame){
-            try{
-                Thread thread = new Thread(() -> {
-
-                    if(!com.isActiveGame()){
-                        com.refreshData();
-                        Platform.runLater(() -> {
-                            try{
-                                drw.drawGame(gc, com.getMap(), com.getMyBot(), myGameInfo);
-                            }catch(Exception ex){
-                                System.err.println("Nepodařilo se vykreslit mapu");
-                            }
-                        });                        
-                    }
-
-                }, "ThirdThread");
-                thread.setDaemon(true);
-                thread.start();
-            }catch (Exception ex){
-                System.err.println("Nepodařilo se překreslení");
-            }  
-        /*}
-        else
-            drw.drawWindow(gc, gameInfo);*/
+        /*Thread thread = new Thread(() -> {
+            if (com.isActiveGame())
+                com.refreshData();
+            Platform.runLater(() -> {
+                drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
+            });
+        }, "ThirdThread");
+        thread.setDaemon(true);
+        thread.start();*/
+        if (com.isActiveGame())
+            com.refreshData();
+        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
     }
     
     public void step(){
-        if(!com.isActiveGame()){
-            com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+        if(com.isActiveGame()){
             com.actionStep();
         }
         rePaint();
     }
     
     public void turnLeft(){
-        if(!com.isActiveGame()){
-            com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+        if(com.isActiveGame()){
             com.actionTurnLeft();
         }
         rePaint();
     }
     
     public void turnRight(){
-        if(!com.isActiveGame()){
-            com.refreshData();
-            wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2]);//?
+        if(com.isActiveGame()){
             com.actionTurnRight();
         }
         rePaint();
@@ -144,7 +144,7 @@ public class Game {
     
     private void delay(){
         try{
-            Thread.sleep(myGameInfo[0]);
+            Thread.sleep(delay);
         }
         catch (Exception ex){
         }
@@ -159,35 +159,32 @@ public class Game {
     }
     
     public void setDelayPlus(){
-        myGameInfo[0] += 100;
+        delay += 100;
     }
     
     public void setDelayMinus(){
-        myGameInfo[0] -= 100;
-        if(myGameInfo[0] < 0){
-            myGameInfo[0] = 0;
+        delay -= 100;
+        if(delay < 0){
+            delay = 0;
         }
     }
     
     public int getDelay(){
-        return myGameInfo[0];
+        return delay;
     }
     
     /**** LogDialog ****/
     
     public LogDialog getLog(){
-        return logDialog;
+        return com.getLog();
     }
     
     public void closeLog(){
-        logDialog.closeDialog();
+        com.closeLog();
     }
     
     /****  ****/
     
-    public boolean isActiveGame (){
-        return activGame;
-    }
     
     public void showServerNameDialog(){
         serverNameDialog.showDialog(primaryStage);
@@ -195,8 +192,9 @@ public class Game {
         com.setServerName(serverNameDialog.getValue());
     }
     
-    public boolean[] getSettingsOfGame(){
-        return settingsOfGame;
+    public boolean[] getGameInfo(){
+        return gameInfo;
     }
+
 }
 

@@ -61,7 +61,7 @@ public class RoboGameClient extends Application {
 
                 case F5://autohra
                     Thread mojeVlakno2 = new Thread(() -> {
-                        game.startGame();
+                        game.autoBot();
                     }, "SecondThread");
                     mojeVlakno2.setDaemon(true);
                     mojeVlakno2.start();

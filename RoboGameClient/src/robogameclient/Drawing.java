@@ -19,6 +19,7 @@ import javafx.scene.text.TextAlignment;
  */
 public class Drawing {
     private int pixel = 20;
+    private int square;
     private double width = 800;
     private double height = 800;
     private int moveX = 0;
@@ -33,31 +34,44 @@ public class Drawing {
      * @param bots arrayList všech botů
      */
     public void draw(GraphicsContext gc, int[][] map, int delay, Bot myBot, ArrayList<Bot> bots){
-        checkPixel(gc);
+        checkPixel(gc, map);
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
         
-        drawInfo(gc, delay);  
-        drawMap(gc, map, myBot, bots);        
+        try{
+            drawInfo(gc, delay);  
+            drawMap(gc, map, myBot, bots);
+        }catch(Exception e){
+            System.out.println("Nepodařilo se vykreslit mapu.");
+        }
     }
     
     /**
      * Upraví hodnotu pixel na optimální velikost
      * @param gc GraphicsContext
      */
-    private void checkPixel(GraphicsContext gc){//doladit..opakuje se zbytečně
+    private void checkPixel(GraphicsContext gc, int[][] map){//doladit..opakuje se zbytečně
         width = gc.getCanvas().getWidth();
         height = gc.getCanvas().getHeight();
         
-        while (pixel * 15 >= width){
+        while (pixel * 50 >= width){
             pixel--;
         }
-        while (pixel * 15 >= height){
+        while (pixel * 50 >= height){
             pixel--;
         }
-        while (pixel * 15 < width && pixel * 15  < height){
+        while (pixel * 50 < width && pixel * 50  < height){
             pixel++;
         }
+        if (map!= null){
+            square = (int)(height - 5 * pixel)/map.length;
+            if (square * map[0].length > width - 2 * pixel){
+                square = (int)(width - 2 * pixel)/map[0].length;
+            }
+            moveX = (int)(width - map[0].length * square)/2;
+            moveY = (int)(height - map.length * square)/2;
+        }
+        
     }
     
     /**
@@ -67,42 +81,21 @@ public class Drawing {
      */
     private void drawInfo(GraphicsContext gc, int delay){
         gc.setFill(Color.BLACK);
-        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel));
+        gc.setFont(Font.font("Verdana", FontWeight.BOLD, 2 * pixel));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("PyBots", width/2, pixel);
+        gc.fillText("PyBots", width/2, 2 * pixel);
         
         gc.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         gc.setTextAlign(TextAlignment.RIGHT);
         gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.format("v 0.7"), pixel/4, height - pixel/4);
+        gc.fillText(String.format("v 0.7.1"), pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.CENTER);
         if (delay != 0){
             gc.fillText("Zpoždění: " + String.format(String.valueOf(delay)), width/2, height - pixel/4);
         }
     }
-    
-    private void checkPixelllll(GraphicsContext gc, int x, int y){//stará metoda
-        width = gc.getCanvas().getWidth();
-        height = gc.getCanvas().getHeight();
-        
-        while (pixel * x > width - pixel){
-            pixel--;
-            //System.out.println("-1");
-        }
-        while (pixel * (y + 2 + 7) > height){
-            pixel--;
-            //System.out.println("-2");
-        }
-        //while (pixel * x + pixel < width && pixel * (y + 2) + pixel < height){
-        while (pixel * x < width - 5 * pixel && pixel * y  < height - 12 * pixel){
-            pixel++;
-            //System.out.println("+");
-        }
-        moveX = (int)(width - x * pixel)/2; 
-        moveY = (int)(height - y * pixel)/2;
-    }
-    
+
     /**
      * Vykreslí podklady mapy
      * @param gc GraphicsContext
@@ -111,8 +104,6 @@ public class Drawing {
      * @param bots ArrayList všech botů
      */
     private void drawMap(GraphicsContext gc, int[][] map, Bot myBot, ArrayList<Bot> bots){
-        drawBots(gc, myBot, bots);
-        
         for (int i = 0; i < map.length; i++){
             for (int j = 0; j < map[0].length; j++){
                 switch(map[i][j]){//upraví se
@@ -131,35 +122,42 @@ public class Drawing {
                     default:
                         break;
                 }
-                gc.fillRect(j * pixel + moveX, i * pixel + moveY + pixel/2, pixel, pixel);
+                gc.fillRect(j * square + moveX, i * square + moveY + square/2, square, square);
             }
         }
+        drawBots(gc, myBot, bots);
     }
     
+    /**
+     * Vykreslí všechny boty
+     * @param gc GraphicsContext
+     * @param myBot můj bot
+     * @param bots všichni boti
+     */
     private void drawBots(GraphicsContext gc, Bot myBot, ArrayList<Bot> bots){
-        gc.setFill(Color.ORANGE);
+        /*gc.setFill(Color.ORANGE);
         bots.forEach(bot -> {
-            gc.fillRect(bot.getPosition().getX() * pixel + moveX, bot.getPosition().getY() * pixel + moveY + pixel/2, pixel, pixel);
-        });
+            gc.fillRect(bot.getPosition().getX() * square + moveX, bot.getPosition().getY() * square + moveY + square/2, square, square);
+        });*/
         
         //můj robot
         gc.setFill(Color.BLACK);
-        switch(myBot.getOrientation()){
+        switch(myBot.getOrientation()){//nefunguje
             case 0:
-                gc.fillOval(myBot.getOrientation() * pixel + pixel*3/8 + moveX, 
-                        myBot.getOrientation() * pixel + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getPosition().getX() * square + square*3/8 + moveX, 
+                        myBot.getPosition().getY() * square + moveY + square/2, square/4, square/4);
                 break;
             case 1:
-                gc.fillOval(myBot.getOrientation() * pixel + pixel*3/4 + moveX, 
-                        myBot.getOrientation() * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getPosition().getX() * square + square*3/4 + moveX, 
+                        myBot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
                 break;
             case 2:
-                gc.fillOval(myBot.getOrientation() * pixel  + pixel*3/8 + moveX, 
-                        myBot.getOrientation() * pixel + pixel*3/4 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getPosition().getX() * square  + square*3/8 + moveX, 
+                        myBot.getPosition().getY() * square + square*3/4 + moveY + square/2, square/4, square/4);
                 break;
             case 3:
-                gc.fillOval(myBot.getOrientation() * pixel + moveX, 
-                        myBot.getOrientation() * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getPosition().getX() * square + moveX, 
+                        myBot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
                 break;
             default:
                 break;
