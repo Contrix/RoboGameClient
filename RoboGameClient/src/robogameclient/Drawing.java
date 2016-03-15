@@ -5,6 +5,8 @@
  */
 package robogameclient;
 
+import Obj.Bot;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,25 +24,28 @@ public class Drawing {
     private int moveX = 0;
     private int moveY = 0;
 
-    public void drawWindow(GraphicsContext gc, int[] gameInfo){
+    /**
+     * Zadá požadavky pro vykrslení jednotlivých součástí
+     * @param gc GraphicsContext
+     * @param map podklad mapy
+     * @param delay zpoždění mezi tahy
+     * @param myBot moj bot
+     * @param bots arrayList všech botů
+     */
+    public void draw(GraphicsContext gc, int[][] map, int delay, Bot myBot, ArrayList<Bot> bots){
         checkPixel(gc);
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
         
-        drawInfo(gc, gameInfo);        
+        drawInfo(gc, delay);  
+        drawMap(gc, map, myBot, bots);        
     }
     
-    
-    public void drawGame(GraphicsContext gc, int[][] array, int[] botInfo, int[] gameInfo){
-        drawWindow(gc, gameInfo);
-        checkPixelllll(gc, array[0].length, array.length);
-        
-        drawArray(gc, array, botInfo);        
-    }
-    
-    
-    
-    private void checkPixel(GraphicsContext gc){
+    /**
+     * Upraví hodnotu pixel na optimální velikost
+     * @param gc GraphicsContext
+     */
+    private void checkPixel(GraphicsContext gc){//doladit..opakuje se zbytečně
         width = gc.getCanvas().getWidth();
         height = gc.getCanvas().getHeight();
         
@@ -55,7 +60,29 @@ public class Drawing {
         }
     }
     
-    private void checkPixelllll(GraphicsContext gc, int x, int y){
+    /**
+     * Vykreslí všechny informace, popisky
+     * @param gc GraphicsContext
+     * @param delay Zpoždění mezi tahy
+     */
+    private void drawInfo(GraphicsContext gc, int delay){
+        gc.setFill(Color.BLACK);
+        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("PyBots", width/2, pixel);
+        
+        gc.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+        gc.setTextAlign(TextAlignment.RIGHT);
+        gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.fillText(String.format("v 0.7"), pixel/4, height - pixel/4);
+        gc.setTextAlign(TextAlignment.CENTER);
+        if (delay != 0){
+            gc.fillText("Zpoždění: " + String.format(String.valueOf(delay)), width/2, height - pixel/4);
+        }
+    }
+    
+    private void checkPixelllll(GraphicsContext gc, int x, int y){//stará metoda
         width = gc.getCanvas().getWidth();
         height = gc.getCanvas().getHeight();
         
@@ -76,10 +103,19 @@ public class Drawing {
         moveY = (int)(height - y * pixel)/2;
     }
     
-    private void drawArray(GraphicsContext gc, int[][] array, int[] botInfo){
-        for (int i = 0; i < array.length; i++){
-            for (int j = 0; j < array[0].length; j++){
-                switch(array[i][j]){
+    /**
+     * Vykreslí podklady mapy
+     * @param gc GraphicsContext
+     * @param map poklad mapy
+     * @param myBot můj bot
+     * @param bots ArrayList všech botů
+     */
+    private void drawMap(GraphicsContext gc, int[][] map, Bot myBot, ArrayList<Bot> bots){
+        drawBots(gc, myBot, bots);
+        
+        for (int i = 0; i < map.length; i++){
+            for (int j = 0; j < map[0].length; j++){
+                switch(map[i][j]){//upraví se
                     case 0://volno
                         gc.setFill(Color.LIGHTGREY);
                         break;
@@ -98,38 +134,35 @@ public class Drawing {
                 gc.fillRect(j * pixel + moveX, i * pixel + moveY + pixel/2, pixel, pixel);
             }
         }
+    }
+    
+    private void drawBots(GraphicsContext gc, Bot myBot, ArrayList<Bot> bots){
+        gc.setFill(Color.ORANGE);
+        bots.forEach(bot -> {
+            gc.fillRect(bot.getPosition().getX() * pixel + moveX, bot.getPosition().getY() * pixel + moveY + pixel/2, pixel, pixel);
+        });
+        
+        //můj robot
         gc.setFill(Color.BLACK);
-        switch(botInfo[2]){
+        switch(myBot.getOrientation()){
             case 0:
-                gc.fillOval(botInfo[0] * pixel + pixel*3/8 + moveX, botInfo[1] * pixel + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getOrientation() * pixel + pixel*3/8 + moveX, 
+                        myBot.getOrientation() * pixel + moveY + pixel/2, pixel/4, pixel/4);
                 break;
             case 1:
-                gc.fillOval(botInfo[0] * pixel + pixel*3/4 + moveX, botInfo[1] * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getOrientation() * pixel + pixel*3/4 + moveX, 
+                        myBot.getOrientation() * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
                 break;
             case 2:
-                gc.fillOval(botInfo[0] * pixel  + pixel*3/8 + moveX, botInfo[1] * pixel + pixel*3/4 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getOrientation() * pixel  + pixel*3/8 + moveX, 
+                        myBot.getOrientation() * pixel + pixel*3/4 + moveY + pixel/2, pixel/4, pixel/4);
                 break;
             case 3:
-                gc.fillOval(botInfo[0] * pixel + moveX, botInfo[1] * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
+                gc.fillOval(myBot.getOrientation() * pixel + moveX, 
+                        myBot.getOrientation() * pixel + pixel*3/8 + moveY + pixel/2, pixel/4, pixel/4);
                 break;
             default:
                 break;
         }
-    }
-    
-    private void drawInfo(GraphicsContext gc, int[] gameInfo){
-        gc.setFill(Color.BLACK);
-        gc.setFont(Font.font("Verdana", FontWeight.BOLD, pixel));
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("PyBots", width/2, pixel);
-        
-        gc.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
-        gc.setTextAlign(TextAlignment.RIGHT);
-        gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.format("v 0.6"), pixel/4, height - pixel/4);
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(String.format(
-                String.valueOf(gameInfo[0])), width/2, height - pixel/4);
     }
 }

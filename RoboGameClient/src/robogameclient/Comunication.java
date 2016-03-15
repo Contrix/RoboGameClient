@@ -30,7 +30,7 @@ public class Comunication {
     private int postRequest = 0;
     private boolean activeGame;
     private Bot myBot; //xy yx, orientace, baterka
-    private boolean[] gameInfo = new boolean[3];//tahová hra, baterky, lasery
+    private final boolean[] gameInfo = new boolean[3];//tahová hra, baterky, lasery
     
     ArrayList<Bot> bots = new ArrayList<>();
     ArrayList<Treasure> treasures = new ArrayList<>();
@@ -116,7 +116,7 @@ public class Comunication {
     */
     private void refreshMap(){
         //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
-        map = new int[(int)obj.getJSONArray("map_resolutions").get(1)][(int)obj.getJSONArray("map_resolutions").get(0)];
+        map = new int[(int)obj.getJSONObject("map_resolutions").getInt("height")][(int)obj.getJSONObject("map_resolutions").getInt("width")];
         
         JSONArray botMap = obj.getJSONArray("map");
         for (int i = 0; i < botMap.length(); i++){
