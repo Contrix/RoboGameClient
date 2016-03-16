@@ -52,4 +52,16 @@ public class Bot {
     public int getBatteryLevel(){
         return batteryLevel;
     }
+    
+    public boolean isSameBot(Bot bot){
+        if (bot.getBatteryLevel() != batteryLevel)
+            return false;
+        if (bot.getOrientation() != orientation)
+            return false;
+        if (bot.getPosition().getX() != position.getX())
+            return false;
+        if (bot.getPosition().getY() != position.getY())
+            return false;
+        return true;                    
+    }
 }

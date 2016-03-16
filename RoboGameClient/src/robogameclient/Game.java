@@ -23,7 +23,7 @@ public class Game {
     private final Stage primaryStage;   
     
     private int delay = 0;
-    private boolean[] gameInfo = {false, false, false}; //tahová hra, batttery game, laserová hra
+    private boolean[] gameInfo = new boolean[3]; //tahová hra, batttery game, laserová hra
     
     private boolean autoNewGame = false;
     private boolean autoMove = false;
@@ -132,6 +132,13 @@ public class Game {
     public void turnRight(){
         if(com.isActiveGame()){
             com.actionTurnRight();
+        }
+        rePaint();
+    }
+    
+    public void actionWait(){
+        if(com.isActiveGame()){
+            com.actionWait();
         }
         rePaint();
     }

@@ -36,24 +36,26 @@ public class RoboGameClient extends Application {
         final Game game = new Game(gc, primaryStage);
         
         game.showServerNameDialog();
+        game.rePaint();
+        game.newGame();
         
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
             canvas.setWidth(scene.getWidth());
             canvas.setHeight(scene.getHeight()-25);//25 - height of menuBar
-            game.rePaint();
+            //game.rePaint();
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
         
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e ) -> {
             switch (e.getCode()) {   
-                case S:
-                    /*Thread mojeVlakno = new Thread(() -> {                        
+                /*case S:
+                    Thread mojeVlakno = new Thread(() -> {                        
                         game.startGame();                        
                     }, "SecondThread");
                     mojeVlakno.setDaemon(true);
-                    mojeVlakno.start();*/
-                    break;
+                    mojeVlakno.start();
+                    break;*/
                     
                 case ESCAPE:
                     primaryStage.close();

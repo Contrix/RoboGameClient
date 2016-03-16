@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import org.json.JSONArray;
@@ -118,8 +119,9 @@ public class Comunication {
     * Obnoví informace o mapě
     */
     private void refreshMap(){
-        //map = new int[obj.getInt("map_height")][obj.getInt("map_width")];
         map = new int[(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("height")][(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("width")];
+        bots.clear();
+        treasures.clear();
         
         JSONArray botMap = obj.getJSONArray("map");
         for (int i = 0; i < botMap.length(); i++){
@@ -188,44 +190,51 @@ public class Comunication {
     
     /**
      * Vytvoří požadavek pro server pro akci otočit se doleva
+     * @return Povedlo se odeslat
      */
-    public void actionTurnLeft(){
-        post("turn_left");        
+    public boolean actionTurnLeft(){
+        return post("turn_left");        
     }
     
     /**
      * Vytvoří požadavek pro server pro akci otočit se doprava
+     * @return Povedlo se odeslat
      */
-    public void actionTurnRight(){
-        post("turn_right");
+    public boolean actionTurnRight(){
+        return post("turn_right");
     }
     
     /**
      * Vytvoří požadavek pro server pro akci krok vpřed
+     * @return Povedlo se odeslat
      */
-    public void actionStep(){
-        post("step");
+    public boolean actionStep(){
+        return post("step");
     }
     
     /**
      * Vytvoří požadavek pro server pro akci vzdát se tahu
+     * @return Povedlo se odeslat
      */
-    public void actionWait(){
-        post("wait");
+    public boolean actionWait(){
+        return post("wait");
     }
     
     /**
      * Vytvoří požadavek pro server pro akci střelba laserem
+     * @return Povedlo se odeslat
      */
-    public void actionLaserBeam(){
-        post("laser_beam");
+    public boolean actionLaserBeam(){
+        return post("laser_beam");
     }
     
     /**
      * Odešle data na server
      * @param s Data k odeslání
+     * @return Povedlo se odeslat
      */
-    private void post(String s){//doladit
+    private boolean post(String s){//doladit
+        LocalTime time = LocalTime.now();
         try{
             URLConnection connectionAction = new URL(server + "action").openConnection();
             connectionAction.setDoOutput(true);
@@ -235,7 +244,6 @@ public class Comunication {
                 activeGame = false;
                 System.err.println("Nepodařilo se odeslat data - " + ex);
             }
-            
             String jsonData = "";
             String inputLine;
             
@@ -250,6 +258,7 @@ public class Comunication {
                 if(obj.getString("state").equals("game_won")){
                     activeGame = false;
                 }
+                //return true;
             } catch (IOException ex) {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);
@@ -259,6 +268,16 @@ public class Comunication {
             activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (POST) - " + ex);
         }
+        LocalTime time2 = LocalTime.now();
+        time2 = time2.minusHours(time.getHour());
+        time2 = time2.minusMinutes(time.getMinute());
+        time2 = time2.minusNanos(time.getNano());
+        time2 = time2.minusSeconds(time.getSecond());
+        System.out.println("Doba POSTu: " + time2);
+        if (!activeGame)
+            writeToLog("Problém s komunikací se serverem, hra byla zrušena");
+        return activeGame;
+        //return false;
     }
     
     /**

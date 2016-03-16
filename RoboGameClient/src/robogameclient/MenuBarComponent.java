@@ -83,6 +83,7 @@ public class MenuBarComponent {
         wait.setAccelerator(KeyCombination.keyCombination("S"));
         wait.setOnAction((ActionEvent) -> {
             System.out.println("wait - S");
+            game.actionWait();
         });        
         menuControl.getItems().addAll(nextStep, move, turnLeft, turnRight, wait, laser);
         
@@ -182,11 +183,11 @@ public class MenuBarComponent {
         }
         
         //Pokud je batteryGame, zapne akci čekání
-        if (game.getGameInfo()[1])
+        if (!game.getGameInfo()[1])
             menuBar.getMenus().get(2).getItems().get(4).setDisable(true);
         
         //Pokud je laserGame, zapne akci laserBeam
-        if (game.getGameInfo()[2])
+        if (!game.getGameInfo()[2])
             menuBar.getMenus().get(2).getItems().get(5).setDisable(true);
         
         //Pokud je tahová hra, zapne delay        

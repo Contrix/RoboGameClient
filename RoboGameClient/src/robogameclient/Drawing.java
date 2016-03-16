@@ -114,7 +114,7 @@ public class Drawing {
                         gc.setFill(Color.YELLOW);
                         break;
                     case 2://bot
-                        gc.setFill(Color.ORANGE);
+                        gc.setFill(Color.LIGHTGREY);
                         break;
                     case 3://blok
                         gc.setFill(Color.GREY);
@@ -135,32 +135,35 @@ public class Drawing {
      * @param bots všichni boti
      */
     private void drawBots(GraphicsContext gc, Bot myBot, ArrayList<Bot> bots){
-        /*gc.setFill(Color.ORANGE);
+        gc.setFill(Color.ORANGE);
         bots.forEach(bot -> {
-            gc.fillRect(bot.getPosition().getX() * square + moveX, bot.getPosition().getY() * square + moveY + square/2, square, square);
-        });*/
-        
-        //můj robot
-        gc.setFill(Color.BLACK);
-        switch(myBot.getOrientation()){//nefunguje
-            case 0:
-                gc.fillOval(myBot.getPosition().getX() * square + square*3/8 + moveX, 
-                        myBot.getPosition().getY() * square + moveY + square/2, square/4, square/4);
-                break;
-            case 1:
-                gc.fillOval(myBot.getPosition().getX() * square + square*3/4 + moveX, 
-                        myBot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
-                break;
-            case 2:
-                gc.fillOval(myBot.getPosition().getX() * square  + square*3/8 + moveX, 
-                        myBot.getPosition().getY() * square + square*3/4 + moveY + square/2, square/4, square/4);
-                break;
-            case 3:
-                gc.fillOval(myBot.getPosition().getX() * square + moveX, 
-                        myBot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
-                break;
-            default:
-                break;
-        }
+            if(bot.isSameBot(myBot))
+                gc.setFill(Color.RED);
+            else
+                gc.setFill(Color.ORANGE);
+            gc.fillOval(bot.getPosition().getX() * square + moveX, bot.getPosition().getY() * square + moveY + square/2, square, square);
+            
+            gc.setFill(Color.BLACK);
+            switch(bot.getOrientation()){
+                case 0:
+                    gc.fillOval(bot.getPosition().getX() * square + square*3/8 + moveX, 
+                            bot.getPosition().getY() * square + moveY + square/2, square/4, square/4);
+                    break;
+                case 1:
+                    gc.fillOval(bot.getPosition().getX() * square + square*3/4 + moveX, 
+                            bot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
+                    break;
+                case 2:
+                    gc.fillOval(bot.getPosition().getX() * square  + square*3/8 + moveX, 
+                            bot.getPosition().getY() * square + square*3/4 + moveY + square/2, square/4, square/4);
+                    break;
+                case 3:
+                    gc.fillOval(bot.getPosition().getX() * square + moveX, 
+                            bot.getPosition().getY() * square + square*3/8 + moveY + square/2, square/4, square/4);
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }
