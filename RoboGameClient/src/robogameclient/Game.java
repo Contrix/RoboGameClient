@@ -94,10 +94,10 @@ public class Game {
                 }*/
             rePaint();
         }
-        if(autoNewGame){
+        /*if(autoNewGame){
             delay(2000);
             newGame();
-        }
+        }*/
     }
     
     public void rePaint(){
@@ -194,6 +194,10 @@ public class Game {
     
     public boolean[] getGameInfo(){
         return gameInfo;
+    }
+    
+    public boolean isActiveGame(){
+        return com.isActiveGame();
     }
 
 }

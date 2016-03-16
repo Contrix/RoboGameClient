@@ -125,23 +125,25 @@ public class Comunication {
         for (int i = 0; i < botMap.length(); i++){
             JSONArray a = botMap.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
-                //všechny položky budou objekty..try pak smazat
-                try {
-                    map[i][j] = (int)a.getInt(j);
+                    //map[i][j] = (int)a.getInt(j);
+                map[i][j] = a.getJSONObject(j).getInt("field");
+
+                switch (a.getJSONObject(j).getInt("field")){
+                    case 1:
+                        treasures.add(new Treasure(j, i));
+                        break;
+                    case 2:
+                        if (a.getJSONObject(j).has("your_bot")){
+                            myBot = new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0);
+                            bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
+                        }
+                        else{
+                            bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                catch(Exception e){//bot
-                    map[i][j] = 2;
-                    if (a.getJSONObject(j).has("your_bot")){
-                        myBot = new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0);
-                        bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
-                    }
-                    else{
-                        bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
-                    }
-                }
-                
-                //==je poklad
-                //treasures.add(new Treasure(x, y));
                 
             }
         }

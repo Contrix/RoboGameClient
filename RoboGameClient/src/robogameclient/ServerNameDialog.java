@@ -1,5 +1,6 @@
 package robogameclient;
 
+import java.net.URI;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,6 +26,7 @@ public class ServerNameDialog {
     private Stage dialog;
     private String serverName;
     
+    
     public Stage showDialog(Window parent) {
         dialog = new Stage();
         dialog.initOwner(parent);
@@ -39,6 +41,7 @@ public class ServerNameDialog {
         Button button = new Button();
         Label label = new Label("Zadejte adresu serveru: ");
         TextField textField = new TextField();
+        textField.setText("http://hroch.spseol.cz:44822/");
         
         root.getChildren().addAll(hBox, button);
         root.setAlignment(Pos.CENTER);
@@ -49,8 +52,9 @@ public class ServerNameDialog {
         hBox.setSpacing(20);
         
         button.setText("Odeslat");
+        button.setDefaultButton(true);
         button.setOnAction((event) -> {
-            if (textField.getText().length() < 3){
+            if (textField.getText().length() < 5){
                 textField.setStyle("-fx-background-color: salmon");
             }
             else {

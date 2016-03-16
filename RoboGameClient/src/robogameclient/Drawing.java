@@ -37,9 +37,9 @@ public class Drawing {
         checkPixel(gc, map);
         gc.setFill(Color.ANTIQUEWHITE);
         gc.fillRect(0, 0, width, height);
+        drawInfo(gc, delay);
         
         try{
-            drawInfo(gc, delay);  
             drawMap(gc, map, myBot, bots);
         }catch(Exception e){
             System.out.println("Nepodařilo se vykreslit mapu.");
