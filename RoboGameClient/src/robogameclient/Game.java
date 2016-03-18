@@ -5,7 +5,8 @@
  */
 package robogameclient;
 
-import javafx.application.Platform;
+import Obj.Bot;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 
@@ -27,6 +28,9 @@ public class Game {
     
     private boolean autoNewGame = false;
     private boolean autoMove = false;
+    
+    private boolean focus = false;
+    private int focusLevel = 0;
     
     /**
      * Řídící jednotka celé hry
@@ -53,13 +57,20 @@ public class Game {
     public final void newGame(){
         com.initialise();
         gameInfo = com.getGameInfo();
-        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
+        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
+        /*
+        Thread mojeVlakno = new Thread(() -> {                        
+            ***                    
+        }, "SecondThread");
+        mojeVlakno.setDaemon(true);
+        mojeVlakno.start();*/
     }
     
     /**
      * Zapne/vypne automatické chování bota
      */
     public void autoBot(){
+        /*
         autoMove = !autoMove;
         if(autoMove){
             while(!com.isActiveGame()){
@@ -70,7 +81,7 @@ public class Game {
                     break;
                 }
             }
-        }
+        }*/
     }
     
     /**
@@ -112,37 +123,72 @@ public class Game {
         thread.start();*/
         if (com.isActiveGame())
             com.refreshData();
-        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
+        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
     }
     
+    /**
+     * Odešle požadavek pro akci "krok"
+     */
     public void step(){
         if(com.isActiveGame()){
-            com.actionStep();
+            if (com.actionStep()){
+                
+            }
         }
         rePaint();
     }
     
+    /**
+     * Odešle požadavek pro akci "otoč se doleva"
+     */
     public void turnLeft(){
         if(com.isActiveGame()){
-            com.actionTurnLeft();
+            if (com.actionTurnLeft()){
+                
+            }
         }
         rePaint();
     }
     
+    /**
+     * Odešle požadavek pro akci "otoč se doprava"
+     */
     public void turnRight(){
         if(com.isActiveGame()){
-            com.actionTurnRight();
+            if (com.actionTurnRight()){
+                
+            }
         }
         rePaint();
     }
     
+    /**
+     * Odešle požadavek pro akci "čekej"
+     */
     public void actionWait(){
         if(com.isActiveGame()){
-            com.actionWait();
+            if (com.actionWait()){
+                
+            }
         }
         rePaint();
     }
-
+    
+    /**
+     * Odešle požadavek pro akci "vytřel laserem"
+     */
+    public void actionLaserBeam(){
+        if(com.isActiveGame()){
+            if (com.actionLaserBeam()){
+                
+            }
+        }
+        rePaint();
+    }
+    
+    /**
+     * nastaví zanínání nových her po dohrání
+     */
     public void setAutoNewGame(){
         autoNewGame = !autoNewGame;
     }
@@ -165,10 +211,16 @@ public class Game {
         }
     }
     
+    /**
+     * Nastaví zpoždění mezi automatickými tahy o 100ms větší
+     */
     public void setDelayPlus(){
         delay += 100;
     }
     
+    /**
+     * Nastaví zpoždění mezi automatickými tahy o 100ms menší
+     */
     public void setDelayMinus(){
         delay -= 100;
         if(delay < 0){
@@ -176,6 +228,10 @@ public class Game {
         }
     }
     
+    /**
+     * Vrátí aktuální hodnotu zpoždění mezi automatickými tahy
+     * @return zpoždění
+     */
     public int getDelay(){
         return delay;
     }
@@ -203,8 +259,42 @@ public class Game {
         return gameInfo;
     }
     
+    /**
+     * Vrátí, zda je hra aktivní
+     * @return aktivní hra
+     */
     public boolean isActiveGame(){
         return com.isActiveGame();
+    }
+    
+    /**
+     * Vrátí ArrayList všech botů
+     * @return bots
+     */
+    public ArrayList<Bot> getBots(){
+        return com.getBots();
+    }
+    
+    /**
+     * Vrátí nastavení vykreslování
+     * @return pixel, velikost vykrslovaného čtverce v poli, posun X, posun Y
+     */
+    public int[] getDrawSettings(){
+        return drw.getDrawSettings();
+    }
+    
+    public void setFocus(){
+        focus = !focus;
+    }
+    
+    public void plusFocusLevel(){
+        focusLevel ++;
+    }
+    
+    public void minusFocusLevel(){
+        focusLevel --;
+        if (focusLevel < 0)
+            focusLevel = 0;
     }
 
 }

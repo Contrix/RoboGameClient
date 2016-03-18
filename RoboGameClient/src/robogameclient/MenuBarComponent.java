@@ -28,13 +28,40 @@ public class MenuBarComponent {
         
         /**item newGame**/
         MenuItem newGame = new MenuItem("Nová hra");
-        newGame.setAccelerator(KeyCombination.keyCombination("F7"));
+        newGame.setAccelerator(KeyCombination.keyCombination("F2"));
         newGame.setOnAction((Action) -> {
             System.out.println("newGame - F7");            
             game.newGame();
             refreshSettings(game);
         });
         menuGame.getItems().add(newGame);
+        
+        /*****menu map*****/
+        
+        Menu menuMap = new Menu("Mapa");
+        
+        /** item focuse **/
+        MenuItem focus = new MenuItem("Zaostřit na bota");
+        focus.setAccelerator(KeyCombination.keyCombination("F5"));
+        focus.setOnAction((action)->{
+            game.setFocus();
+        });
+        
+        /** item focusPlus **/
+        MenuItem focusPlus = new MenuItem("Přiblížit");
+        focusPlus.setAccelerator(KeyCombination.keyCombination("ADD"));
+        focusPlus.setOnAction((action)->{
+            game.plusFocusLevel();
+        });
+        
+        /** item focuseMinus **/
+        MenuItem focusMinus = new MenuItem("Oddlálit");
+        focusMinus.setAccelerator(KeyCombination.keyCombination("SUBTRACT"));
+        focusMinus.setOnAction((action)->{
+            game.minusFocusLevel();
+        });
+        
+        menuMap.getItems().addAll(focus, focusPlus, focusMinus);
         
         /*****menu control*****/
         Menu menuControl = new Menu("Ovládání");
@@ -92,8 +119,11 @@ public class MenuBarComponent {
         
         /**item servername**/
         MenuItem serverName = new MenuItem("Připojit k serveru");
+        serverName.setAccelerator(KeyCombination.keyCombination("F1"));
         serverName.setOnAction((ActionEvent t) -> {
-            game.showServerNameDialog();
+            game.showServerNameDialog();           
+            game.newGame();
+            refreshSettings(game);
         });
         menuServer.getItems().addAll(serverName);
         
@@ -136,7 +166,7 @@ public class MenuBarComponent {
         
         /**item autogame**/
         CheckMenuItem autoGame = new CheckMenuItem("Zapnout PyBota");
-        autoGame.setAccelerator(KeyCombination.keyCombination("F5"));
+        autoGame.setAccelerator(KeyCombination.keyCombination("F6"));
         autoGame.selectedProperty().addListener(listener -> {
             System.out.println("autoGame - F5");
             
@@ -144,7 +174,7 @@ public class MenuBarComponent {
         
         /**item autostart**/
         CheckMenuItem autostart = new CheckMenuItem("Po dokončení začít novou hru");
-        autostart.setAccelerator(KeyCombination.keyCombination("F6"));
+        autostart.setAccelerator(KeyCombination.keyCombination("F7"));
         autostart.selectedProperty().addListener(listener -> {
             System.out.println("autoStart - F6");
             game.setAutoNewGame();
@@ -164,7 +194,7 @@ public class MenuBarComponent {
 
         menuSettings.getItems().addAll(autoGame, autostart, showLog, delayPlus, delayMinus);        
         
-        menuBar.getMenus().addAll(menuServer, menuGame, menuControl, menuSettings, menuHelp);
+        menuBar.getMenus().addAll(menuServer, menuGame, menuMap, menuControl, menuSettings, menuHelp);
         refreshSettings(game);
         return menuBar;
     }
@@ -172,32 +202,32 @@ public class MenuBarComponent {
     private void refreshSettings(Game game){
         //Pokud je hra aktivní, zapne ovládání
         if (game.isActiveGame()){
-            menuBar.getMenus().get(2).getItems().forEach((item) -> {
+            menuBar.getMenus().get(3).getItems().forEach((item) -> {
                 item.setDisable(false);
             });
         }
         else{
-            menuBar.getMenus().get(2).getItems().forEach((item) -> {
+            menuBar.getMenus().get(3).getItems().forEach((item) -> {
                 item.setDisable(true);
             });
         }
         
         //Pokud je batteryGame, zapne akci čekání
         if (!game.getGameInfo()[1])
-            menuBar.getMenus().get(2).getItems().get(4).setDisable(true);
+            menuBar.getMenus().get(3).getItems().get(4).setDisable(true);
         
         //Pokud je laserGame, zapne akci laserBeam
         if (!game.getGameInfo()[2])
-            menuBar.getMenus().get(2).getItems().get(5).setDisable(true);
+            menuBar.getMenus().get(3).getItems().get(5).setDisable(true);
         
         //Pokud je tahová hra, zapne delay        
         if (game.getGameInfo()[0]){
-            menuBar.getMenus().get(3).getItems().get(3).setDisable(false);
-            menuBar.getMenus().get(3).getItems().get(4).setDisable(false);
+            menuBar.getMenus().get(4).getItems().get(3).setDisable(false);
+            menuBar.getMenus().get(4).getItems().get(4).setDisable(false);
         }
         else{
-            menuBar.getMenus().get(3).getItems().get(3).setDisable(true);
-            menuBar.getMenus().get(3).getItems().get(4).setDisable(true);
+            menuBar.getMenus().get(4).getItems().get(3).setDisable(true);
+            menuBar.getMenus().get(4).getItems().get(4).setDisable(true);
         }
     }
 }

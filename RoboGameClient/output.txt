@@ -1,0 +1,8 @@
+http://hroch.spseol.cz:44822/
+Nepodařilo se vykreslit mapu.
+bot_id: 598136593275851731195908911319520782
+move - W
+Doba POSTu: 00:00:01.051
+move - W
+Doba POSTu: 00:00:00.872
+Log nelze zavřít, nebyl otevřen.

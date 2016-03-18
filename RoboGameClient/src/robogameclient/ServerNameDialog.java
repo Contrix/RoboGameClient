@@ -1,6 +1,5 @@
 package robogameclient;
 
-import java.net.URI;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,7 +23,7 @@ import javafx.stage.Window;
  */
 public class ServerNameDialog {
     private Stage dialog;
-    private String serverName;
+    private String serverName = "http://hroch.spseol.cz:44822/";
     
     
     public Stage showDialog(Window parent) {
@@ -41,7 +40,8 @@ public class ServerNameDialog {
         Button button = new Button();
         Label label = new Label("Zadejte adresu serveru: ");
         TextField textField = new TextField();
-        textField.setText("http://hroch.spseol.cz:44822/");
+        textField.setPrefColumnCount(15);
+        textField.setText(serverName);
         
         root.getChildren().addAll(hBox, button);
         root.setAlignment(Pos.CENTER);
@@ -49,7 +49,7 @@ public class ServerNameDialog {
         
         hBox.getChildren().addAll(label, textField);
         hBox.setAlignment(Pos.CENTER);
-        hBox.setSpacing(20);
+        hBox.setSpacing(5);
         
         button.setText("Odeslat");
         button.setDefaultButton(true);

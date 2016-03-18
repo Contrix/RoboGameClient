@@ -15,6 +15,8 @@ public class Bot {
     private MyPoint position;
     private int orientation;
     private int batteryLevel;
+    private String name;
+    private String lastAction = "none";
     
     /**
      * Objekt jednoto bota
@@ -22,11 +24,13 @@ public class Bot {
      * @param y souřadnice Y
      * @param orientation číselné označení orientace
      * @param batteryLevel úroveň nabití baterie
+     * @param name jméno bota
      */
-    public Bot(int x, int y, int orientation, int batteryLevel){
+    public Bot(int x, int y, int orientation, int batteryLevel, String name){
         this.position = new MyPoint(y, x);
         this.orientation = orientation;
         this.batteryLevel = batteryLevel;
+        this.name = name;
     }
     
     /**
@@ -53,6 +57,14 @@ public class Bot {
         return batteryLevel;
     }
     
+    /**
+     * Vrátí jméno bota
+     * @return jméno
+     */
+    public String getName(){
+        return name;
+    }
+
     public boolean isSameBot(Bot bot){
         if (bot.getBatteryLevel() != batteryLevel)
             return false;

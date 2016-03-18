@@ -38,7 +38,7 @@ public class Comunication {
     ArrayList<Treasure> treasures = new ArrayList<>();
     
     private int map[][];
-    private JSONObject obj;
+    private JSONObject object;
     
     /*****GET*****/
     
@@ -56,7 +56,7 @@ public class Comunication {
         String jsonData = "";
         String inputLine;
         try{
-            URLConnection connectionToServer = new URL(server).openConnection();
+            URLConnection connectionToServer = new URL(server + "init").openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
@@ -85,9 +85,9 @@ public class Comunication {
      * Obnoví informace o hře
     */
     private void refreshGameInfo(){
-        gameInfo[0] = obj.getJSONObject("game_info").getBoolean("rounded_game");
-        gameInfo[1] = obj.getJSONObject("game_info").getBoolean("battery_game");
-        gameInfo[2] = obj.getJSONObject("game_info").getBoolean("laser_game");
+        gameInfo[0] = object.getJSONObject("game_info").getBoolean("rounded_game");
+        gameInfo[1] = object.getJSONObject("game_info").getBoolean("battery_game");
+        gameInfo[2] = object.getJSONObject("game_info").getBoolean("laser_game");
     }
     
     /**
@@ -102,7 +102,7 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
-                obj = new JSONObject(jsonData);                
+                object = new JSONObject(jsonData);                
             } catch (IOException ex) {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);            
@@ -119,28 +119,40 @@ public class Comunication {
     * Obnoví informace o mapě
     */
     private void refreshMap(){
-        map = new int[(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("height")][(int)obj.getJSONObject("game_info").getJSONObject("map_resolutions").getInt("width")];
+        map = new int[(int)object.getJSONObject("game_info")
+                .getJSONObject("map_resolutions")
+                .getInt("height")][(int)object.getJSONObject("game_info")
+                .getJSONObject("map_resolutions").getInt("width")];
         bots.clear();
         treasures.clear();
         
-        JSONArray botMap = obj.getJSONArray("map");
+        JSONArray botMap = object.getJSONArray("map");
         for (int i = 0; i < botMap.length(); i++){
             JSONArray a = botMap.getJSONArray(i);
             for (int j = 0; j < a.length(); j++){
                     //map[i][j] = (int)a.getInt(j);
-                map[i][j] = a.getJSONObject(j).getInt("field");
+                    JSONObject obj = a.getJSONObject(j);
+                map[i][j] = obj.getInt("field");
 
-                switch (a.getJSONObject(j).getInt("field")){
+                switch (obj.getInt("field")){
                     case 1:
                         treasures.add(new Treasure(j, i));
                         break;
                     case 2:
-                        if (a.getJSONObject(j).has("your_bot")){
-                            myBot = new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0);
-                            bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
+                        if (obj.has("your_bot")){
+                            myBot = new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name"));
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name")));
                         }
                         else{
-                            bots.add(new Bot(j,i, (int)a.getJSONObject(j).getInt("orientation"),0));
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name")));
+                        }
+                    case 4:
+                        if (obj.has("your_bot")){
+                            myBot = new Bot(j, i, (int)obj.getInt("orientation"), obj.getInt("battery_level"), obj.getString("name"));
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), obj.getInt("battery_level"), obj.getString("name")));
+                        }
+                        else{
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), obj.getInt("battery_level"), obj.getString("name")));
                         }
                         break;
                     default:
@@ -251,11 +263,11 @@ public class Comunication {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
-                obj = new JSONObject(jsonData);
+                object = new JSONObject(jsonData);
                 postRequest ++;
-                writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, obj.getString("state")));                
+                writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state")));                
                 //System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
-                if(obj.getString("state").equals("game_won")){
+                if(object.getString("state").equals("game_won")){
                     activeGame = false;
                 }
                 //return true;
