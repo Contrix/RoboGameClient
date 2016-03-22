@@ -6,6 +6,7 @@
 package robogameclient;
 
 import Obj.Bot;
+import static java.lang.Math.abs;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -18,8 +19,8 @@ import javafx.scene.text.TextAlignment;
  * @author Jirka
  */
 public class Drawing {
-    private int pixel = 20;
-    private int square;
+    private int pixel = 16;
+    private int square = 10;
     private double width = 800;
     private double height = 800;
     private int moveX = 0;
@@ -43,7 +44,7 @@ public class Drawing {
         
         try{
             drawMap(gc, map, myBot, bots);            
-            //drawFocusedMap
+            //drawFocusedMap(gc, map, myBot, bots, focusLevel);
         }catch(Exception e){
             System.out.println("Nepodařilo se vykreslit mapu." + e);
         }
@@ -74,7 +75,6 @@ public class Drawing {
             moveX = (int)(width - map[0].length * square)/2;
             moveY = (int)(height - map.length * square)/2;
         }
-        
     }
     
     /**
@@ -139,7 +139,7 @@ public class Drawing {
      * @param myBot můj bot
      * @param bots ArrayList všech botů
      */
-    private void drawFocusedMap(GraphicsContext gc, int[][] map, Bot myBot, ArrayList<Bot> bots){
+    private void drawFocusedMap(GraphicsContext gc, int[][] map, Bot myBot, ArrayList<Bot> bots, int focusLevel){//ve vývoji
         for (int i = 0; i < map.length; i++){
             for (int j = 0; j < map[0].length; j++){
                 switch(map[i][j]){//upraví se
@@ -159,7 +159,9 @@ public class Drawing {
                     default:
                         break;
                 }
-                gc.fillRect(j * square + moveX, i * square + moveY + square/2, square, square);
+                if (map.length / focusLevel /2 < abs(myBot.getPosition().getY() - i))
+                    if (map[0].length / focusLevel /2 < abs(myBot.getPosition().getX() - j))
+                gc.fillRect(j * square + moveX, i * square + moveY + square/2,square,square);
             }
         }
         drawBots(gc, myBot, bots);

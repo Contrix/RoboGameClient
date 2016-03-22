@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  * @author Jirka
  */
 public class Game {
-    private final static Comunication com = new Comunication();
+    private final Comunication com = new Comunication();
     private final Drawing drw = new Drawing();
     private final Wave wave = new Wave();     
     
@@ -30,7 +30,7 @@ public class Game {
     private boolean autoMove = false;
     
     private boolean focus = false;
-    private int focusLevel = 0;
+    private int focusLevel = 1;
     
     /**
      * Řídící jednotka celé hry
@@ -112,78 +112,97 @@ public class Game {
     }
     
     public void rePaint(){
-        /*Thread thread = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             if (com.isActiveGame())
                 com.refreshData();
-            Platform.runLater(() -> {
+            drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
+            /*Platform.runLater(() -> {
                 drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
-            });
+            });*/
         }, "ThirdThread");
         thread.setDaemon(true);
-        thread.start();*/
-        if (com.isActiveGame())
-            com.refreshData();
-        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
+        thread.start();
+        
     }
     
     /**
      * Odešle požadavek pro akci "krok"
      */
     public void step(){
-        if(com.isActiveGame()){
-            if (com.actionStep()){
-                
+        Thread threadStep = new Thread(() -> {
+            if(com.isActiveGame()){
+                if (com.actionStep()){
+
+                }
             }
-        }
-        rePaint();
+            rePaint();
+        }, "StepThread");
+        threadStep.setDaemon(true);
+        threadStep.start();
     }
     
     /**
      * Odešle požadavek pro akci "otoč se doleva"
      */
     public void turnLeft(){
-        if(com.isActiveGame()){
-            if (com.actionTurnLeft()){
-                
+        Thread threadLeft = new Thread(() -> {
+            if(com.isActiveGame()){
+                if (com.actionTurnLeft()){
+
+                }
             }
-        }
-        rePaint();
+            rePaint();
+        }, "LeftThread");
+        threadLeft.setDaemon(true);
+        threadLeft.start();
     }
     
     /**
      * Odešle požadavek pro akci "otoč se doprava"
      */
     public void turnRight(){
-        if(com.isActiveGame()){
-            if (com.actionTurnRight()){
-                
+        Thread threadRigtht = new Thread(() -> {
+            if(com.isActiveGame()){
+                if (com.actionTurnRight()){
+
+                }
             }
-        }
-        rePaint();
+            rePaint();
+        }, "RightThread");
+        threadRigtht.setDaemon(true);
+        threadRigtht.start();
     }
     
     /**
      * Odešle požadavek pro akci "čekej"
      */
     public void actionWait(){
-        if(com.isActiveGame()){
-            if (com.actionWait()){
-                
+        Thread threadWait = new Thread(() -> {
+            if(com.isActiveGame()){
+                if (com.actionWait()){
+
+                }
             }
-        }
-        rePaint();
+            rePaint();
+        }, "WaitThread");
+        threadWait.setDaemon(true);
+        threadWait.start();
     }
     
     /**
      * Odešle požadavek pro akci "vytřel laserem"
      */
     public void actionLaserBeam(){
-        if(com.isActiveGame()){
-            if (com.actionLaserBeam()){
-                
+        Thread threadLaser = new Thread(() -> {
+            if(com.isActiveGame()){
+                if (com.actionLaserBeam()){
+
+                }
             }
-        }
-        rePaint();
+            rePaint();
+        }, "LaserThread");
+        threadLaser.setDaemon(true);
+        threadLaser.start();
     }
     
     /**
@@ -293,8 +312,8 @@ public class Game {
     
     public void minusFocusLevel(){
         focusLevel --;
-        if (focusLevel < 0)
-            focusLevel = 0;
+        if (focusLevel < 1)
+            focusLevel = 1;
     }
 
 }

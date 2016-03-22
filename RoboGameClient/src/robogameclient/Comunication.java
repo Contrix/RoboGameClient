@@ -56,7 +56,7 @@ public class Comunication {
         String jsonData = "";
         String inputLine;
         try{
-            URLConnection connectionToServer = new URL(server + "init").openConnection();
+            URLConnection connectionToServer = new URL(server + ":44822/init").openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
@@ -97,7 +97,7 @@ public class Comunication {
         String jsonData = "";
         String inputLine;
         try{
-            URLConnection connectionGetMap = new URL(server + "game/" + id).openConnection();
+            URLConnection connectionGetMap = new URL(server + ":44822/game/" + id).openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
@@ -146,6 +146,7 @@ public class Comunication {
                         else{
                             bots.add(new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name")));
                         }
+                        break;
                     case 4:
                         if (obj.has("your_bot")){
                             myBot = new Bot(j, i, (int)obj.getInt("orientation"), obj.getInt("battery_level"), obj.getString("name"));
@@ -248,7 +249,7 @@ public class Comunication {
     private boolean post(String s){//doladit
         LocalTime time = LocalTime.now();
         try{
-            URLConnection connectionAction = new URL(server + "action").openConnection();
+            URLConnection connectionAction = new URL(server + ":44822/action").openConnection();
             connectionAction.setDoOutput(true);
             try (OutputStreamWriter out = new OutputStreamWriter(connectionAction.getOutputStream())) {
                 out.write("bot_id=" + id + "&action=" + s);

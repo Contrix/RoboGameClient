@@ -46,6 +46,7 @@ public class MenuBarComponent {
         focus.setOnAction((action)->{
             game.setFocus();
         });
+        focus.setDisable(true);
         
         /** item focusPlus **/
         MenuItem focusPlus = new MenuItem("Přiblížit");
@@ -53,6 +54,7 @@ public class MenuBarComponent {
         focusPlus.setOnAction((action)->{
             game.plusFocusLevel();
         });
+        focusPlus.setDisable(true);
         
         /** item focuseMinus **/
         MenuItem focusMinus = new MenuItem("Oddlálit");
@@ -60,6 +62,7 @@ public class MenuBarComponent {
         focusMinus.setOnAction((action)->{
             game.minusFocusLevel();
         });
+        focusMinus.setDisable(true);
         
         menuMap.getItems().addAll(focus, focusPlus, focusMinus);
         

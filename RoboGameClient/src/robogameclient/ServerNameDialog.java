@@ -23,7 +23,7 @@ import javafx.stage.Window;
  */
 public class ServerNameDialog {
     private Stage dialog;
-    private String serverName = "http://hroch.spseol.cz:44822/";
+    private String serverName = "http://hroch.spseol.cz";
     
     
     public Stage showDialog(Window parent) {

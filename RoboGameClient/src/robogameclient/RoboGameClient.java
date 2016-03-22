@@ -64,6 +64,7 @@ public class RoboGameClient extends Application {
         /**
          * Zobrazení popisku u bota
          */
+        
         canvas.addEventHandler(MouseEvent.MOUSE_MOVED, 
         new EventHandler<MouseEvent>() 
         {
@@ -99,7 +100,6 @@ public class RoboGameClient extends Application {
                 default:
                     break;
             }
-            //System.out.println(e.getCode());
         });
         
         primaryStage.setOnCloseRequest(EventHandler ->{
