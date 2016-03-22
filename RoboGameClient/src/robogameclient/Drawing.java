@@ -92,7 +92,7 @@ public class Drawing {
         gc.setTextAlign(TextAlignment.RIGHT);
         gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.format("v 0.7.2"), pixel/4, height - pixel/4);
+        gc.fillText(String.format("v 0.7.3"), pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.CENTER);
         if (delay != 0){
             gc.fillText("Zpoždění: " + String.format(String.valueOf(delay)), width/2, height - pixel/4);
