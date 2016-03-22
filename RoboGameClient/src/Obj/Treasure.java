@@ -12,7 +12,7 @@ import robogameclient.MyPoint;
  * @author Jirka
  */
 public class Treasure {
-    private MyPoint position;
+    private final MyPoint position;
     
     public Treasure(int x, int y){
         this.position = new MyPoint(y, x);

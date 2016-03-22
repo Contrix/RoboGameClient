@@ -247,7 +247,7 @@ public class Comunication {
      * @return Povedlo se odeslat
      */
     private boolean post(String s){//doladit
-        LocalTime time = LocalTime.now();
+        LocalTime time = null;
         try{
             URLConnection connectionAction = new URL(server + ":44822/action").openConnection();
             connectionAction.setDoOutput(true);
@@ -261,13 +261,13 @@ public class Comunication {
             String inputLine;
             
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()))) {
+                time = LocalTime.now();
                 while ((inputLine = in.readLine()) != null){
                     jsonData += inputLine + "\n";
                 }
                 object = new JSONObject(jsonData);
                 postRequest ++;
                 writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state")));                
-                //System.out.printf("%2s %20s  state: %s\n", postRequest, "sending: " + s, obj.getString("state"));
                 if(object.getString("state").equals("game_won")){
                     activeGame = false;
                 }

@@ -142,7 +142,7 @@ public class MenuBarComponent {
         /**item update**/
         MenuItem update = new MenuItem("Zkontrolovat aktualizace");
         update.setOnAction((Action) -> {
-            updateDialog.showDialog(game.getStage());
+            //updateDialog.showDialog(game.getStage());
         });        
         menuHelp.getItems().addAll(aboutApp, update);
                 

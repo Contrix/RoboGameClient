@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Tooltip;
-import static javafx.scene.input.KeyCode.ESCAPE;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -28,7 +27,7 @@ import javafx.util.Duration;
  */
 public class RoboGameClient extends Application {
     private final MenuBarComponent menuBarComponent = new MenuBarComponent();
-    private Tooltip tooltip = new Tooltip();
+    private final Tooltip tooltip = new Tooltip();
     
     @Override
     public void start(Stage primaryStage){
@@ -63,8 +62,7 @@ public class RoboGameClient extends Application {
         
         /**
          * Zobrazení popisku u bota
-         */
-        
+         */        
         canvas.addEventHandler(MouseEvent.MOUSE_MOVED, 
         new EventHandler<MouseEvent>() 
         {
@@ -107,8 +105,7 @@ public class RoboGameClient extends Application {
         });
 
         root.setAlignment(Pos.CENTER_LEFT);
-        root.getChildren().addAll(menuBarComponent.getMenuBar(game), canvas);
-        
+        root.getChildren().addAll(menuBarComponent.getMenuBar(game), canvas);        
         primaryStage.setTitle("RoboGame");
         primaryStage.setScene(scene);
         primaryStage.show();

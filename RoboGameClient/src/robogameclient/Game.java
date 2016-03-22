@@ -129,80 +129,80 @@ public class Game {
      * Odešle požadavek pro akci "krok"
      */
     public void step(){
-        Thread threadStep = new Thread(() -> {
+        //Thread threadStep = new Thread(() -> {
             if(com.isActiveGame()){
                 if (com.actionStep()){
 
                 }
             }
             rePaint();
-        }, "StepThread");
+        /*}, "StepThread");
         threadStep.setDaemon(true);
-        threadStep.start();
+        threadStep.start();*/
     }
     
     /**
      * Odešle požadavek pro akci "otoč se doleva"
      */
     public void turnLeft(){
-        Thread threadLeft = new Thread(() -> {
+        //Thread threadLeft = new Thread(() -> {
             if(com.isActiveGame()){
                 if (com.actionTurnLeft()){
 
                 }
             }
             rePaint();
-        }, "LeftThread");
+        /*}, "LeftThread");
         threadLeft.setDaemon(true);
-        threadLeft.start();
+        threadLeft.start();*/
     }
     
     /**
      * Odešle požadavek pro akci "otoč se doprava"
      */
     public void turnRight(){
-        Thread threadRigtht = new Thread(() -> {
+        //Thread threadRigtht = new Thread(() -> {
             if(com.isActiveGame()){
                 if (com.actionTurnRight()){
 
                 }
             }
             rePaint();
-        }, "RightThread");
+        /*}, "RightThread");
         threadRigtht.setDaemon(true);
-        threadRigtht.start();
+        threadRigtht.start();*/
     }
     
     /**
      * Odešle požadavek pro akci "čekej"
      */
     public void actionWait(){
-        Thread threadWait = new Thread(() -> {
+        //Thread threadWait = new Thread(() -> {
             if(com.isActiveGame()){
                 if (com.actionWait()){
 
                 }
             }
             rePaint();
-        }, "WaitThread");
+        /*}, "WaitThread");
         threadWait.setDaemon(true);
-        threadWait.start();
+        threadWait.start();*/
     }
     
     /**
      * Odešle požadavek pro akci "vytřel laserem"
      */
     public void actionLaserBeam(){
-        Thread threadLaser = new Thread(() -> {
+        //Thread threadLaser = new Thread(() -> {
             if(com.isActiveGame()){
                 if (com.actionLaserBeam()){
 
                 }
             }
             rePaint();
-        }, "LaserThread");
+        /*}, "LaserThread");
         threadLaser.setDaemon(true);
-        threadLaser.start();
+        threadLaser.start();*/
     }
     
     /**

@@ -12,11 +12,11 @@ import robogameclient.MyPoint;
  * @author Jirka
  */
 public class Bot {
-    private MyPoint position;
-    private int orientation;
-    private int batteryLevel;
-    private String name;
-    private String lastAction = "none";
+    private final MyPoint position;
+    private final int orientation;
+    private final int batteryLevel;
+    private final String name;
+    private final String lastAction = "none";
     
     /**
      * Objekt jednoto bota
@@ -68,11 +68,11 @@ public class Bot {
     public boolean isSameBot(Bot bot){
         if (bot.getBatteryLevel() != batteryLevel)
             return false;
-        if (bot.getOrientation() != orientation)
+        else if (bot.getOrientation() != orientation)
             return false;
-        if (bot.getPosition().getX() != position.getX())
+        else if (bot.getPosition().getX() != position.getX())
             return false;
-        if (bot.getPosition().getY() != position.getY())
+        else if (bot.getPosition().getY() != position.getY())
             return false;
         return true;                    
     }
