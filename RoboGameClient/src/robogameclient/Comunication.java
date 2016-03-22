@@ -53,15 +53,15 @@ public class Comunication {
         myBot = null;
         writeToLog("Vytvářím novou hru");
         
-        String jsonData = "";
+        StringBuilder response = new StringBuilder();
         String inputLine;
         try{
             URLConnection connectionToServer = new URL(server + ":44822/init").openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
-                    jsonData += inputLine + "\n";
+                    response.append(inputLine);
                 }
-                id = new JSONObject(jsonData).getString("bot_id");
+                id = new JSONObject(response.toString()).getString("bot_id");
                 System.out.println("bot_id: " + id);
                 activeGame = true;
                 
@@ -94,15 +94,15 @@ public class Comunication {
      * Obnoví stávající data
     */
     public void refreshData(){
-        String jsonData = "";
+        StringBuilder response = new StringBuilder();
         String inputLine;
         try{
             URLConnection connectionGetMap = new URL(server + ":44822/game/" + id).openConnection();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionGetMap.getInputStream()))) {
                 while ((inputLine = in.readLine()) != null){
-                    jsonData += inputLine + "\n";
-                }
-                object = new JSONObject(jsonData);                
+                    response.append(inputLine);
+                }    
+                object = new JSONObject(response.toString());
             } catch (IOException ex) {
                 activeGame = false;
                 System.err.println("Nepodařilo se přečíst data - " + ex);            
@@ -257,15 +257,15 @@ public class Comunication {
                 activeGame = false;
                 System.err.println("Nepodařilo se odeslat data - " + ex);
             }
-            String jsonData = "";
             String inputLine;
+            StringBuilder response = new StringBuilder();
             
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()))) {
                 time = LocalTime.now();
                 while ((inputLine = in.readLine()) != null){
-                    jsonData += inputLine + "\n";
-                }
-                object = new JSONObject(jsonData);
+                    response.append(inputLine);
+                }                
+                object = new JSONObject(response.toString());
                 postRequest ++;
                 writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state")));                
                 if(object.getString("state").equals("game_won")){

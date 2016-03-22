@@ -112,16 +112,16 @@ public class Game {
     }
     
     public void rePaint(){
-        Thread thread = new Thread(() -> {
+        //Thread thread = new Thread(() -> {
             if (com.isActiveGame())
                 com.refreshData();
             drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
             /*Platform.runLater(() -> {
                 drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
             });*/
-        }, "ThirdThread");
+        /*}, "ThirdThread");
         thread.setDaemon(true);
-        thread.start();
+        thread.start();*/
         
     }
     
