@@ -70,27 +70,30 @@ public class Game {
      * Zapne/vypne automatické chování bota
      */
     public void autoBot(){
-        /*
         autoMove = !autoMove;
         if(autoMove){
-            while(!com.isActiveGame()){
-                nextStep();
-                if (delay !=0)
-                    delay();
-                if(!autoMove){
-                    break;
+            Thread mojeVlakno = new Thread(() -> {        
+                while(com.isActiveGame()){
+                    nextStep();
+                    if (delay !=0)
+                        delay();
+                    if(!autoMove){
+                        break;
+                    }
                 }
-            }
-        }*/
+            }, "SecondThread");
+            mojeVlakno.setDaemon(true);
+            mojeVlakno.start();
+        }
     }
     
     /**
      * Jeden krok algoritmu
      */
-    public void nextStep(){//předělat
+    public void nextStep(){
         if(com.isActiveGame()){
             com.refreshData();
-            /*switch (wave.getAction(com.getMap(), new MyPoint(com.getMyBot()[1], com.getMyBot()[0]), com.getTreasure(), com.getMyBot()[2])){
+            switch (wave.getAction(com.getMap(), com.getMyBot().getPosition(), com.getTreasure().get(0).getPosition(), com.getMyBot().getOrientation())){
                 case "step":
                     com.actionStep();
                     break;
@@ -100,9 +103,15 @@ public class Game {
                 case "rotateRight":
                     com.actionTurnRight();
                     break;
+                case "wait":
+                    com.actionWait();
+                    break;
+                case "laserBeam":
+                    com.actionLaserBeam();
+                    break;
                 default:
                     break;
-                }*/
+                }
             rePaint();
         }
         /*if(autoNewGame){

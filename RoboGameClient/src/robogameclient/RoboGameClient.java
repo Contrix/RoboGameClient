@@ -48,9 +48,9 @@ public class RoboGameClient extends Application {
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         final Game game = new Game(gc, primaryStage);
         
-        game.showServerNameDialog();
-        game.rePaint();
+        game.showServerNameDialog();        
         game.newGame();
+        game.rePaint();
         
         Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
             canvas.setWidth(scene.getWidth());

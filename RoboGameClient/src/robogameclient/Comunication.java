@@ -188,14 +188,14 @@ public class Comunication {
     /**
     * @return  Všechyn boty na mapě
     */
-    public ArrayList getBots(){
+    public ArrayList<Bot> getBots(){
         return bots;
     }
     
     /**
     * @return  Poklady
     */
-    public ArrayList getTreasure(){
+    public ArrayList<Treasure> getTreasure(){
         return treasures;
     }
     

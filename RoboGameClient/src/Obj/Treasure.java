@@ -17,4 +17,8 @@ public class Treasure {
     public Treasure(int x, int y){
         this.position = new MyPoint(y, x);
     }
+    
+    public MyPoint getPosition(){
+        return position;
+    }
 }

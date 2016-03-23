@@ -105,6 +105,7 @@ public class MenuBarComponent {
         MenuItem laser = new MenuItem("Střelba laserem");
         laser.setAccelerator(KeyCombination.keyCombination("SPACE"));
         laser.setOnAction((ActionEvent) -> {
+            game.actionLaserBeam();
             System.out.println("laser - SPACE");
         });
         
@@ -172,7 +173,7 @@ public class MenuBarComponent {
         autoGame.setAccelerator(KeyCombination.keyCombination("F6"));
         autoGame.selectedProperty().addListener(listener -> {
             System.out.println("autoGame - F5");
-            
+            game.autoBot();
         });
         
         /**item autostart**/
