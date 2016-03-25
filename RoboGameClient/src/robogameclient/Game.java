@@ -93,25 +93,30 @@ public class Game {
     public void nextStep(){
         if(com.isActiveGame()){
             com.refreshData();
-            switch (wave.getAction(com.getMap(), com.getMyBot().getPosition(), com.getTreasure().get(0).getPosition(), com.getMyBot().getOrientation())){
-                case "step":
-                    com.actionStep();
-                    break;
-                case "rotateLeft":
-                    com.actionTurnLeft();
-                    break;
-                case "rotateRight":
-                    com.actionTurnRight();
-                    break;
-                case "wait":
-                    com.actionWait();
-                    break;
-                case "laserBeam":
-                    com.actionLaserBeam();
-                    break;
-                default:
-                    break;
-                }
+            if (com.getMyBot().getBatteryLevel() >= 5){
+                switch (wave.getAction(com.getMap(), com.getMyBot().getPosition(), com.getTreasure().get(0).getPosition(), com.getMyBot().getOrientation())){
+                    case "step":
+                        com.actionStep();
+                        break;
+                    case "rotateLeft":
+                        com.actionTurnLeft();
+                        break;
+                    case "rotateRight":
+                        com.actionTurnRight();
+                        break;
+                    case "wait":
+                        com.actionWait();
+                        break;
+                    case "laserBeam":
+                        com.actionLaserBeam();
+                        break;
+                    default:
+                        break;
+                    }
+            }
+            else{
+                com.actionWait();
+            }
             rePaint();
         }
         /*if(autoNewGame){

@@ -140,11 +140,11 @@ public class Comunication {
                         break;
                     case 2:
                         if (obj.has("your_bot")){
-                            myBot = new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name"));
-                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name")));
+                            myBot = new Bot(j, i, (int)obj.getInt("orientation"), 10, obj.getString("name"));
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), 10, obj.getString("name")));
                         }
                         else{
-                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), -1, obj.getString("name")));
+                            bots.add(new Bot(j, i, (int)obj.getInt("orientation"), 10, obj.getString("name")));
                         }
                         break;
                     case 4:
