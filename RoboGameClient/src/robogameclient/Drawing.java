@@ -36,17 +36,22 @@ public class Drawing {
      * @param focus zasotření na vlastního bota
      * @param focusLevel úroveň zaostření
      */
-    public void draw(GraphicsContext gc, int[][] map, int delay, Bot myBot, ArrayList<Bot> bots, boolean focus, int focusLevel){
-        checkPixel(gc, map);
-        gc.setFill(Color.ANTIQUEWHITE);
-        gc.fillRect(0, 0, width, height);
-        drawInfo(gc, delay);
-        
-        try{
-            drawMap(gc, map, myBot, bots);            
-            //drawFocusedMap(gc, map, myBot, bots, focusLevel);
-        }catch(Exception e){
-            System.out.println("Nepodařilo se vykreslit mapu." + e);
+    public void draw(boolean graphics, GraphicsContext gc, int[][] map, int delay, Bot myBot, ArrayList<Bot> bots, boolean focus, int focusLevel){
+        if (graphics){
+            checkPixel(gc, map);
+            gc.setFill(Color.ANTIQUEWHITE);
+            gc.fillRect(0, 0, width, height);
+            drawInfo(gc, delay);
+
+            try{
+                drawMap(gc, map, myBot, bots);            
+                //drawFocusedMap(gc, map, myBot, bots, focusLevel);
+            }catch(Exception e){
+                System.out.println("Nepodařilo se vykreslit mapu." + e);
+            }
+        }
+        else{
+            typeMap(map);
         }
     }
     
@@ -92,7 +97,7 @@ public class Drawing {
         gc.setTextAlign(TextAlignment.RIGHT);
         gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.format("v 0.7.4"), pixel/4, height - pixel/4);
+        gc.fillText(String.format("v 0.7.5"), pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.CENTER);
         if (delay != 0){
             gc.fillText("Zpoždění: " + String.format(String.valueOf(delay)), width/2, height - pixel/4);
@@ -203,49 +208,16 @@ public class Drawing {
                 default:
                     break;
             }
-            /*
-            if(myBot.getLastAction().equals("laserBeam")){
-                gc.setFill(Color.CYAN);
-                int length = 1;
-                switch(myBot.getOrientation()){
-                    case 0:
-                        for (int i = 0; i < 100; i++){
-                            if (map[bot.getPosition().getY() - 1][bot.getPosition().getX()] == 0)
-                                length ++;
-                            else
-                                break;
-                        }
-                        break;
-                    case 1:
-                        for (int i = 0; i < 100; i++){
-                            if (map[bot.getPosition().getY()][bot.getPosition().getX() + 1] == 0)
-                                length ++;
-                            else
-                                break;
-                        }
-                        break;
-                        
-                    case 2:
-                        for (int i = 0; i < 100; i++){
-                            if (map[bot.getPosition().getY() + 1][bot.getPosition().getX()] == 0)
-                                length ++;
-                            else
-                                break;
-                        }
-                        break;
-                        
-                    case 3:
-                        for (int i = 0; i < 100; i++){
-                            if (map[bot.getPosition().getY()][bot.getPosition().getX() - 1] == 0)
-                                length ++;
-                            else
-                                break;
-                        }
-                        break;
-                }
-                System.out.println("ssa" + length);
-            }*/
         });
+    }
+    
+    private void typeMap (int[][] map){
+        for (int i = 0; i < map.length; i++){
+            for (int j = 0; j < map[0].length; j++){
+                System.out.printf(" %2d", map[i][j]);
+            }
+            System.out.println();
+        }
     }
     
     /**

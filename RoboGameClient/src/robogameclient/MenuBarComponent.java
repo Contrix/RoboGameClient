@@ -145,6 +145,7 @@ public class MenuBarComponent {
         update.setOnAction((Action) -> {
             //updateDialog.showDialog(game.getStage());
         });        
+        update.setDisable(true);
         menuHelp.getItems().addAll(aboutApp, update);
                 
         /*****menu Settings*****/
@@ -172,15 +173,16 @@ public class MenuBarComponent {
         CheckMenuItem autoGame = new CheckMenuItem("Zapnout PyBota");
         autoGame.setAccelerator(KeyCombination.keyCombination("F6"));
         autoGame.selectedProperty().addListener(listener -> {
-            System.out.println("autoGame - F5");
+            System.out.println("autoGame - F6");
             game.autoBot();
+            refreshSettings(game);
         });
         
         /**item autostart**/
         CheckMenuItem autostart = new CheckMenuItem("Po dokončení začít novou hru");
         autostart.setAccelerator(KeyCombination.keyCombination("F7"));
         autostart.selectedProperty().addListener(listener -> {
-            System.out.println("autoStart - F6");
+            System.out.println("autoStart - F7");
             game.setAutoNewGame();
         });
         
@@ -232,6 +234,12 @@ public class MenuBarComponent {
         else{
             menuBar.getMenus().get(4).getItems().get(3).setDisable(true);
             menuBar.getMenus().get(4).getItems().get(4).setDisable(true);
+        }
+        
+        if (game.isAutoBot()){
+            menuBar.getMenus().get(3).getItems().forEach((item) -> {
+                item.setDisable(true);
+            });
         }
     }
 }

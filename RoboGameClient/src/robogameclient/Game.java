@@ -7,6 +7,7 @@ package robogameclient;
 
 import Obj.Bot;
 import java.util.ArrayList;
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 
@@ -22,6 +23,8 @@ public class Game {
     private final ServerNameDialog serverNameDialog = new ServerNameDialog();
     private final GraphicsContext gc;
     private final Stage primaryStage;   
+    
+    private boolean graphicsMode = true;
     
     private int delay = 0;
     private boolean[] gameInfo = new boolean[3]; //tahová hra, batttery game, laserová hra
@@ -57,13 +60,7 @@ public class Game {
     public final void newGame(){
         com.initialise();
         gameInfo = com.getGameInfo();
-        drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
-        /*
-        Thread mojeVlakno = new Thread(() -> {                        
-            ***                    
-        }, "SecondThread");
-        mojeVlakno.setDaemon(true);
-        mojeVlakno.start();*/
+        rePaint();
     }
     
     /**
@@ -79,6 +76,10 @@ public class Game {
                         delay();
                     if(!autoMove){
                         break;
+                    }
+                    if (!com.isActiveGame() && autoNewGame){
+                        delay(2000);
+                        newGame();
                     }
                 }
             }, "SecondThread");
@@ -119,23 +120,18 @@ public class Game {
             }
             rePaint();
         }
-        /*if(autoNewGame){
-            delay(2000);
-            newGame();
-        }*/
     }
     
     public void rePaint(){
-        //Thread thread = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             if (com.isActiveGame())
                 com.refreshData();
-            drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
-            /*Platform.runLater(() -> {
-                drw.draw(gc, com.getMap(), delay, com.getMyBot(), com.getBots());
-            });*/
-        /*}, "ThirdThread");
+            Platform.runLater(() -> {
+                drw.draw(graphicsMode, gc, com.getMap(), delay, com.getMyBot(), com.getBots(), focus, focusLevel);
+            });
+        }, "ThirdThread");
         thread.setDaemon(true);
-        thread.start();*/
+        thread.start();
         
     }
     
@@ -328,6 +324,18 @@ public class Game {
         focusLevel --;
         if (focusLevel < 1)
             focusLevel = 1;
+    }
+    
+    public boolean isAutoBot(){
+        return autoMove;
+    }
+    
+    public void disableGraphicsMode(String name){
+        graphicsMode = false;
+        com.setServerName(name);        
+        autoNewGame = true;
+        newGame();
+        autoBot();
     }
 
 }

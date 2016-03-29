@@ -27,7 +27,7 @@ import org.json.JSONObject;
  */
 public class Comunication {
     private final LogDialog logDialog = new LogDialog();
-    private String server;//http://hroch.spseol.cz:44822/
+    private String server;//http://hroch.spseol.cz
     private String id;
     private int postRequest = 0;
     private boolean activeGame;
@@ -94,6 +94,7 @@ public class Comunication {
      * Obnoví stávající data
     */
     public void refreshData(){
+        LocalTime time = LocalTime.now();;
         StringBuilder response = new StringBuilder();
         String inputLine;
         try{
@@ -111,6 +112,12 @@ public class Comunication {
             activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (GET) - " + ex);
         }
+        LocalTime time2 = LocalTime.now();
+        time2 = time2.minusHours(time.getHour());
+        time2 = time2.minusMinutes(time.getMinute());
+        time2 = time2.minusNanos(time.getNano());
+        time2 = time2.minusSeconds(time.getSecond());
+        System.out.println("ping: " + time2);
         if (activeGame)
             refreshMap();
     }
@@ -247,7 +254,7 @@ public class Comunication {
      * @return Povedlo se odeslat
      */
     private boolean post(String s){//doladit
-        LocalTime time = null;
+        
         try{
             URLConnection connectionAction = new URL(server + ":44822/action").openConnection();
             connectionAction.setDoOutput(true);
@@ -261,7 +268,6 @@ public class Comunication {
             StringBuilder response = new StringBuilder();
             
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connectionAction.getInputStream()))) {
-                time = LocalTime.now();
                 while ((inputLine = in.readLine()) != null){
                     response.append(inputLine);
                 }                
@@ -281,12 +287,6 @@ public class Comunication {
             activeGame = false;
             System.err.println("Nepodařilo se navázat spojení se servrem (POST) - " + ex);
         }
-        LocalTime time2 = LocalTime.now();
-        time2 = time2.minusHours(time.getHour());
-        time2 = time2.minusMinutes(time.getMinute());
-        time2 = time2.minusNanos(time.getNano());
-        time2 = time2.minusSeconds(time.getSecond());
-        System.out.println("Doba POSTu: " + time2);
         if (!activeGame)
             writeToLog("Problém s komunikací se serverem, hra byla zrušena");
         return activeGame;
@@ -332,6 +332,5 @@ public class Comunication {
     */
     public void setServerName(String name){
         server = name;
-        //initialise();
     }
 }
