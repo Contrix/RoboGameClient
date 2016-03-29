@@ -208,13 +208,4 @@ public class Wave {
                 break;
         }
     }
-    
-    private void printMap(){
-        for (int i = 0; i < stepMap.length; i++){
-            for (int j = 0; j < stepMap[0].length; j++){
-                System.out.printf(" %2d", stepMap[i][j]);
-            }
-            System.out.println();
-        }
-    }
 }
