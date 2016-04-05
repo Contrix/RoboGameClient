@@ -31,6 +31,7 @@ public class RoboGameClient extends Application {
     private final MenuBarComponent menuBarComponent = new MenuBarComponent();
     private final Tooltip tooltip = new Tooltip();
     private String consoleServerName = null;
+    private int delay = 0;
     
     @Override
     public void init() throws Exception {
@@ -41,6 +42,13 @@ public class RoboGameClient extends Application {
         for (Map.Entry<String,String> entry : namedParameters.entrySet()) {
             if (entry.getKey().contains("server")){
                 consoleServerName = entry.getValue();
+            }
+            if (entry.getKey().contains("delay")){
+                try{
+                    delay = Integer.parseInt(entry.getValue());
+                }catch (Exception e){
+                    System.out.println("Nepodařilo se nastavit zpoždění!");
+                }
             }
         }
     } 
@@ -53,12 +61,13 @@ public class RoboGameClient extends Application {
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         final Game game = new Game(gc, primaryStage);
         
+        game.setDelay(delay);
         if(consoleServerName == null){
             game.showServerNameDialog();
         }
         else{
-            game.disableGraphicsMode(consoleServerName);
-        }
+            game.disableGraphicsMode(consoleServerName);            
+        }        
         game.newGame();
         
         if(consoleServerName == null){        

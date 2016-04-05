@@ -33,7 +33,7 @@ public class AboutAppDialog {
         root.setAlignment(Pos.CENTER);
         
         Label autorLabel = new Label("Autor - Jiří Hanák");
-        Label versionLabel = new Label("Verze - 0.7.6");
+        Label versionLabel = new Label("Verze - 0.7.7");
         Label licence = new Label("Licence - CC BY 3.0 CZ");
         
         root.getChildren().addAll(autorLabel, versionLabel, licence);

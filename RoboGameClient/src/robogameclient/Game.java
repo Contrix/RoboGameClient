@@ -265,6 +265,10 @@ public class Game {
         return delay;
     }
     
+    public void setDelay(int delay){
+        this.delay = delay;
+    }
+    
     /**** LogDialog ****/
     
     public LogDialog getLog(){
