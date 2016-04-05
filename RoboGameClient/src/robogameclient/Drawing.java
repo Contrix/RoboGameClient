@@ -51,7 +51,7 @@ public class Drawing {
             }
         }
         else{
-            typeMap(map);
+            //typeMap(map);
         }
     }
     
@@ -78,7 +78,7 @@ public class Drawing {
                 square = (int)(width - 2 * pixel)/map[0].length;
             }
             moveX = (int)(width - map[0].length * square)/2;
-            moveY = (int)(height - map.length * square)/2;
+            moveY = (int)(height - (map.length + 1) * square)/2;
         }
     }
     
@@ -97,7 +97,7 @@ public class Drawing {
         gc.setTextAlign(TextAlignment.RIGHT);
         gc.fillText(String.format("© Jiří Hanák"), width - pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.format("v 0.7.5"), pixel/4, height - pixel/4);
+        gc.fillText(String.format("v 0.7.6"), pixel/4, height - pixel/4);
         gc.setTextAlign(TextAlignment.CENTER);
         if (delay != 0){
             gc.fillText("Zpoždění: " + String.format(String.valueOf(delay)), width/2, height - pixel/4);

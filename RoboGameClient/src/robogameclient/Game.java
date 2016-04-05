@@ -95,7 +95,7 @@ public class Game {
         if(com.isActiveGame()){
             com.refreshData();
             if (com.getMyBot().getBatteryLevel() >= 5){
-                switch (wave.getAction(com.getMap(), com.getMyBot().getPosition(), com.getTreasure().get(0).getPosition(), com.getMyBot().getOrientation())){
+                switch (wave.getAction(com.getMap(), com.getMyBot().getPosition(), com.getTres().getPosition(), com.getMyBot().getOrientation())){
                     case "step":
                         com.actionStep();
                         break;

@@ -36,6 +36,7 @@ public class Comunication {
     
     ArrayList<Bot> bots = new ArrayList<>();
     ArrayList<Treasure> treasures = new ArrayList<>();
+    Treasure tres = null;
     
     private int map[][];
     private JSONObject object;
@@ -143,7 +144,8 @@ public class Comunication {
 
                 switch (obj.getInt("field")){
                     case 1:
-                        treasures.add(new Treasure(j, i));
+                        //treasures.add(new Treasure(j, i));
+                        tres = new Treasure(j, i);
                         break;
                     case 2:
                         if (obj.has("your_bot")){
@@ -195,15 +197,19 @@ public class Comunication {
     /**
     * @return  Všechyn boty na mapě
     */
-    public ArrayList<Bot> getBots(){
+    public synchronized ArrayList<Bot> getBots(){
         return bots;
     }
     
     /**
     * @return  Poklady
     */
-    public ArrayList<Treasure> getTreasure(){
+    public synchronized ArrayList<Treasure> getTreasure(){
         return treasures;
+    }
+    
+    public Treasure getTres(){
+        return tres;
     }
     
     /*****POST*****/
@@ -273,7 +279,8 @@ public class Comunication {
                 }                
                 object = new JSONObject(response.toString());
                 postRequest ++;
-                writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state")));                
+                writeToLog(String.format("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state")));
+                System.out.printf("%3s %30s  state: %s\n", postRequest, "sending: " + s, object.getString("state"));
                 if(object.getString("state").equals("game_won")){
                     activeGame = false;
                 }
