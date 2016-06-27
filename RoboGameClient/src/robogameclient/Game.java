@@ -7,6 +7,7 @@ package robogameclient;
 
 import Obj.Bot;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
@@ -69,7 +70,9 @@ public class Game {
     public void autoBot(){
         autoMove = !autoMove;
         if(autoMove){
-            Thread mojeVlakno = new Thread(() -> {        
+            Thread mojeVlakno = new Thread(() -> {     
+                Scanner sc = new Scanner(System.in, "Windows-1250");
+                int volba = 0;
                 while(com.isActiveGame()){
                     nextStep();
                     if (delay !=0)
@@ -81,6 +84,21 @@ public class Game {
                         delay(2000);
                         newGame();
                     }
+                    if (!com.isActiveGame() && !graphicsMode){ 
+                        try{
+                            System.out.print("MENU: 1)Nová hra 2)Automatická nová hra:  ");
+                            volba = Integer.parseInt(sc.nextLine());
+                        }catch(Exception e){
+                            System.out.println("Špatná volba!");
+                        }
+                        switch(volba){
+                            case 2:
+                                setAutoNewGame();                                
+                            case 1:
+                                newGame();
+                                break;
+                        }
+                    }                    
                 }
             }, "SecondThread");
             mojeVlakno.setDaemon(true);
@@ -334,10 +352,10 @@ public class Game {
         return autoMove;
     }
     
-    public void disableGraphicsMode(String name){
+    public void disableGraphicsMode(String name, boolean autoStart){
         graphicsMode = false;
         com.setServerName(name);        
-        autoNewGame = true;
+        autoNewGame = autoStart;
         newGame();
         autoBot();
     }

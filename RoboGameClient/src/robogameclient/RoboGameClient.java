@@ -30,14 +30,24 @@ import javafx.util.Duration;
 public class RoboGameClient extends Application {
     private final MenuBarComponent menuBarComponent = new MenuBarComponent();
     private final Tooltip tooltip = new Tooltip();
+    
+    /**Console**/
     private String consoleServerName = null;
     private int delay = 0;
+    private boolean autostart = false;
     
     @Override
     public void init() throws Exception {
         super.init();
         Parameters parameters = getParameters();
+        List<String> rawArguments = parameters.getRaw();
         Map<String, String> namedParameters = parameters.getNamed();
+        
+        for(String raw : rawArguments) {
+            if(raw.contains("autoStart")){
+                autostart = true;
+            }
+        }
         
         for (Map.Entry<String,String> entry : namedParameters.entrySet()) {
             if (entry.getKey().contains("server")){
@@ -49,6 +59,9 @@ public class RoboGameClient extends Application {
                 }catch (Exception e){
                     System.out.println("Nepodařilo se nastavit zpoždění!");
                 }
+            }
+            if (entry.getKey().contains("autoStart")){
+                
             }
         }
     } 
@@ -64,11 +77,12 @@ public class RoboGameClient extends Application {
         game.setDelay(delay);
         if(consoleServerName == null){
             game.showServerNameDialog();
+            game.newGame();
         }
         else{
-            game.disableGraphicsMode(consoleServerName);            
+            game.disableGraphicsMode(consoleServerName, autostart);            
         }        
-        game.newGame();
+        
         
         if(consoleServerName == null){        
             Timeline timer = new Timeline(new KeyFrame(Duration.millis(1000), (ActionEvent event) -> {
